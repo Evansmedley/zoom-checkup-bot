@@ -1,0 +1,31 @@
+/* Color of the links BEFORE scroll */
+.navbar-scroll .nav-link,
+.navbar-scroll .navbar-toggler .fa-bars {
+  color: black;
+}
+
+/* Color of the links AFTER scroll */
+.navbar-scrolled .nav-link,
+.navbar-scrolled .navbar-toggler .fa-bars {
+  color: white;
+}
+
+/* Color of the navbar AFTER scroll */
+.navbar-scrolled {
+  background-color: black;
+}
+
+/* An optional height of the navbar AFTER scroll */
+.navbar.navbar-scroll.navbar-scrolled {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.bg-image {
+    background-image: url(https://mdbcdn.b-cdn.net/img/new/fluid/city/113.jpg);
+    height: 100vh;
+}
+
+.text-white {
+   background-color: rgba(0, 0, 0, 0.8);
+}
