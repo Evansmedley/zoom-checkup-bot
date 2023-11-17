@@ -39,4 +39,4 @@ jobs:
           context: .
           file: ./checkup-bot-backend/Dockerfile
           push: true
-          tags: user/app:latest
+          tags: checkupbot/checkup-bot:latest
