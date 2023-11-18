@@ -37,6 +37,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./checkup-bot-backend
-          file: ./Dockerfile
+          file: Dockerfile
           push: true
           tags: checkupbot/checkup-bot:latest
