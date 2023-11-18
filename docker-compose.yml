@@ -4,8 +4,8 @@ services:
   checkup-bot-backend:
     image: checkup-bot-backend
     build:
-      context: checkup-bot-backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: checkup-bot-backend/Dockerfile
     container_name: checkup-bot-backend
     ports:
       - "8080:8080"
