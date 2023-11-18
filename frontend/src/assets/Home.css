@@ -1,0 +1,15 @@
+div {
+    color: green;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+
+.bg-image {
+    background-image: url(/src/assets/images/ellipse-home.png);
+    height: 100vh;
+    background-repeat: no-repeat;
+}
