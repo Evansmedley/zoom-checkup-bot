@@ -20,7 +20,16 @@
   color: black;
 }
 
+.App-group {
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-left: 50px;
+  padding-top: 10px;
+}
+
+
 .App-link {
-  color: #61dafb;
+  color: white;
+  padding-left: 20px;
 }
 

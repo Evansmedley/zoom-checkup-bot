@@ -3,8 +3,13 @@ div {
 }
 
 .App-logo {
-    height: 40vmin;
     pointer-events: none;
+    float: right;
+    width: 600px;
+    height: 600px;
+    flex-shrink: 0;
+    padding-top: 100px;
+    padding-right: 200px;
 }
 
 
