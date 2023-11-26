@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  checkup-bot-backend:
+    image: checkup-bot/backend
+    build:
+      context: checkup-bot-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - checkup-bot-network
+
+  checkup-bot-frontend:
+    image: checkup-bot/frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - checkup-bot-network
+
+networks:
+  checkup-bot-network:
+    name: checkup-bot-network
