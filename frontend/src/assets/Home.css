@@ -1,20 +1,47 @@
-div {
-    color: green;
+.robot-pic {
+    height: 95vh;
+    background-repeat: no-repeat;   
 }
 
-.App-logo {
-    pointer-events: none;
-    float: right;
-    width: 600px;
-    height: 600px;
-    flex-shrink: 0;
-    padding-top: 100px;
-    padding-right: 200px;
-}
-
-
-.bg-image {
-    background-image: url(/src/assets/images/ellipse-home.png);
+.bg-sphere {
+    background-image: url(/src/assets/images/ellipse-background.png);
     height: 100vh;
     background-repeat: no-repeat;
+}
+
+
+.page-content {
+    display: flex;
+}
+
+.text {
+    color: white;
+
+    display : flex;
+    flex-direction: column;
+    padding-left: 70px;
+
+    padding-top: 18%;
+
+    width: 644px;
+    height: 67px;
+    
+}
+
+#mainText {
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding-bottom: 25px;
+
+
+}
+
+#subText {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
 }
