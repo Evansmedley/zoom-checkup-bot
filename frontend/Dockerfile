@@ -1,13 +1,12 @@
-FROM node:20.10.0-alpine3.18
+FROM node:20-alpine
 
 WORKDIR /app
 
-ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json /
+COPY src/ /src
+COPY public/ /public
 
-COPY package.json ./
-COPY package-lock.json ./
+# TODO: fix dependenciess to remove force
 RUN npm install --force
-
-COPY . ./
 
 CMD ["npm", "start"]

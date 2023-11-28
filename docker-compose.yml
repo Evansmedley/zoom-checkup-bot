@@ -6,8 +6,6 @@ services:
     build:
       context: checkup-bot-backend
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     networks:
       - checkup-bot-network
 
@@ -16,11 +14,20 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
+    networks:
+      - checkup-bot-network
+  
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    build:
+      context: nginx
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "80:80"
+      - "443:443"
     networks:
       - checkup-bot-network
 
 networks:
   checkup-bot-network:
-    name: checkup-bot-network
