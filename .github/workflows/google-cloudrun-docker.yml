@@ -51,8 +51,7 @@ on:
 
 env:
   PROJECT_ID: checkup-bot-2
-  BACKEND_SERVICE: 'checkup-bot'
-  FRONTEND_SERVICE: 'checkup-bot-frontend'
+  SERVICE: 'checkup-bot'
   REGION: 'us-central1'
 
 jobs:
@@ -109,11 +108,18 @@ jobs:
           push: true
           tags: checkupbot/checkup-bot-frontend:latest
 
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx
+          push: true
+          tags: checkupbot/checkup-bot-reverse-proxy:latest
+
       - name: Deploy backend to Cloud Run
         id: deploy-backend
         uses: google-github-actions/deploy-cloudrun@v0
         with:
-          service: ${{ env.BACKEND_SERVICE }}
+          service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: docker.io/checkupbot/checkup-bot:latest
       
@@ -121,13 +127,23 @@ jobs:
         id: deploy-frontend
         uses: google-github-actions/deploy-cloudrun@v0
         with:
-          service: ${{ env.FRONTEND_SERVICE }}
+          service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: docker.io/checkupbot/checkup-bot-frontend:latest
 
+      - name: Deploy reverse proxy to Cloud Run
+        id: deploy-reverse-proxy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: docker.io/checkupbot/checkup-bot-reverse-proxy:latest
 
       - name: Show Backend Output
         run: echo ${{ steps.deploy-backend.outputs.url }}
 
       - name: Show Frontend Output
         run: echo ${{ steps.deploy-frontend.outputs.url }}
+
+      - name: Show Reverse Proxy Output
+        run: echo ${{ steps.deploy-reverse-proxy.outputs.url }}
