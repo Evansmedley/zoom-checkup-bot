@@ -115,22 +115,6 @@ jobs:
           push: true
           tags: checkupbot/checkup-bot-reverse-proxy:latest
 
-      - name: Deploy backend to Cloud Run
-        id: deploy-backend
-        uses: google-github-actions/deploy-cloudrun@v0
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          image: docker.io/checkupbot/checkup-bot:latest
-      
-      - name: Deploy frontend to Cloud Run
-        id: deploy-frontend
-        uses: google-github-actions/deploy-cloudrun@v0
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          image: docker.io/checkupbot/checkup-bot-frontend:latest
-
       - name: Deploy reverse proxy to Cloud Run
         id: deploy-reverse-proxy
         uses: google-github-actions/deploy-cloudrun@v0
@@ -138,12 +122,6 @@ jobs:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: docker.io/checkupbot/checkup-bot-reverse-proxy:latest
-
-      - name: Show Backend Output
-        run: echo ${{ steps.deploy-backend.outputs.url }}
-
-      - name: Show Frontend Output
-        run: echo ${{ steps.deploy-frontend.outputs.url }}
 
       - name: Show Reverse Proxy Output
         run: echo ${{ steps.deploy-reverse-proxy.outputs.url }}
