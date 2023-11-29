@@ -50,7 +50,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: 358322538977
+  PROJECT_ID: checkup-bot-2
   SERVICE: 'checkup-bot'
   REGION: 'us-central1'
 
