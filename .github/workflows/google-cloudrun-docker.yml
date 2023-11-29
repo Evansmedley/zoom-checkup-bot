@@ -96,7 +96,7 @@ jobs:
 
       - name: Build, tag and push container
         id: build-image
-        uses: doxker/build-push-action@v3
+        uses: docker/build-push-action@v3
         with:
           context: checkup-bot-backend
           push: true
