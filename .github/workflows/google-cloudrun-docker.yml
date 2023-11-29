@@ -108,7 +108,7 @@ jobs:
           push: true
           tags: checkupbot/checkup-bot-frontend:latest
 
-      - name: Build and push frontend
+      - name: Build and push reverse proxy
         uses: docker/build-push-action@v5
         with:
           context: ./nginx/gcloud
