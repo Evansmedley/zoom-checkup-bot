@@ -98,8 +98,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: checkup-bot-backend
-          file: ./Dockerfile
+          context: ./checkup-bot-backend
           push: true
           tags: checkupbot/checkup-bot:${{ github.sha }}
 
