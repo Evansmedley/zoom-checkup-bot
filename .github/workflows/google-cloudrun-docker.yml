@@ -51,8 +51,8 @@ on:
 
 env:
   PROJECT_ID: checkup-bot-2
-  SERVICE: 'checkup-bot'
-  ARTIFACT_REPO: 'checkup-bot'
+  BACKEND_SERVICE: 'checkup-bot'
+  FRONTEND_SERVICE: 'checkup-bot-frontend'
   REGION: 'us-central1'
 
 jobs:
@@ -95,22 +95,39 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Build and push backend
         uses: docker/build-push-action@v5
         with:
           context: ./checkup-bot-backend
           push: true
-          tags: checkupbot/checkup-bot:${{ github.sha }}
+          tags: checkupbot/checkup-bot:latest
 
-      - name: Deploy to Cloud Run
-        id: deploy
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: checkupbot/checkup-bot-frontend:latest
+
+      - name: Deploy backend to Cloud Run
+        id: deploy-backend
         uses: google-github-actions/deploy-cloudrun@v0
         with:
-          service: ${{ env.SERVICE }}
+          service: ${{ env.BACKEND_SERVICE }}
           region: ${{ env.REGION }}
-          # NOTE: If using a pre-built image, update the image name here
           image: docker.io/checkupbot/checkup-bot:latest
+      
+      - name: Deploy frontend to Cloud Run
+        id: deploy-frontend
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.FRONTEND_SERVICE }}
+          region: ${{ env.REGION }}
+          image: docker.io/checkupbot/checkup-bot-frontend:latest
 
-      # If required, use the Cloud Run url output in later steps
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+
+      - name: Show Backend Output
+        run: echo ${{ steps.deploy-backend.outputs.url }}
+
+      - name: Show Frontend Output
+        run: echo ${{ steps.deploy-frontend.outputs.url }}
