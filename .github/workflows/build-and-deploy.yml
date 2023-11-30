@@ -1,7 +1,0 @@
-name: Checkup bot build and deploy to AWS
-
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
