@@ -1,5 +1,7 @@
 .robot-pic {
-    height: 95vh;
+    width: 512px;
+    height: 561px;
+
     background-repeat: no-repeat;   
 }
 
@@ -45,3 +47,8 @@
     line-height: normal;
 
 }
+
+.App-link {
+    color: white;
+    padding-left: 20px;
+  }

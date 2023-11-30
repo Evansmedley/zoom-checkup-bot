@@ -1,0 +1,34 @@
+.App-link {
+    color: green;
+    padding-left: 20px;
+}
+
+.shapes {
+}
+
+.small-ellipse {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    left: 600px;
+    top: 50px;
+}
+
+.main-rec {
+    display: flex;
+    width: 400px;
+    height: 500px;
+    /* left: 500px;
+    top: 125px; */
+    align-self: center;
+    justify-content: center;
+
+}
+
+.small-rec {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    left: 300px;
+    top: 300px;
+}
