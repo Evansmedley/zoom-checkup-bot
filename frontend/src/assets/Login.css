@@ -3,26 +3,31 @@
     padding-left: 20px;
 }
 
-.shapes {
+.main-rec{
+    display: flex;
+    z-index: 3;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    left: 35%;
+    right: 50%;
+}
+
+
+.center-rec {
+    width: 400px;
+    height: 500px;
+
+
 }
 
 .small-ellipse {
     position: absolute;
     width: 350px;
     height: 350px;
-    left: 600px;
-    top: 50px;
-}
-
-.main-rec {
-    display: flex;
-    width: 400px;
-    height: 500px;
-    /* left: 500px;
-    top: 125px; */
-    align-self: center;
-    justify-content: center;
-
+    left: 750px;
+    top: 10px;
+    z-index: 2;
 }
 
 .small-rec {
@@ -31,4 +36,5 @@
     height: 350px;
     left: 300px;
     top: 300px;
+    z-index: 1;
 }

@@ -2,31 +2,28 @@ import '../assets/Login.css';
 import mainRectange from '../assets/images/login-rectangle-main.png'
 import smallRectange from '../assets/images/login-rectangle-small.png'
 import smallEllipse from '../assets/images/login-ellipse-small.png'
+import Header from './Header';
+
 
 const Login = () => {
 
     return(
         <div>
-            <div className="App-group">
-                <a className="App-link" href="/">
-                    Home
-                    </a>
-                    <a className="App-link" href="/contact">
-                    Contact
-                    </a>
-                    <a className="App-link" href="/login">
-                    Log In
-                    </a>
-            </div>
-
-
-            <div className="shapes">
-                <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" />
-                <img src={smallRectange} className="small-rec" alt="small-rectangle" />
-                <img src={mainRectange} className="main-rec" alt="main-rectangle" />
-
+            <Header />
+            <div className="main-rec">
+                <form>
+                    <label>
+                        Name:
+                        <input type="text" name="name" />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+                <img src={mainRectange} className="center-rec" alt="main-rectangle" />
 
             </div>
+
+            <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" />
+            <img src={smallRectange} className="small-rec" alt="small-rectangle" />
         </div>
 
 
