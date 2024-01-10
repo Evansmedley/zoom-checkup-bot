@@ -11,15 +11,26 @@ const Login = () => {
         <div>
             <Header />
             <div className="main-rec">
-                <form>
-                    <label>
-                        Name:
-                        <input type="text" name="name" />
-                    </label>
-                    <input type="submit" value="Submit" />
-                </form>
-                <img src={mainRectange} className="center-rec" alt="main-rectangle" />
+            <img src={mainRectange} className="center-rec" alt="main-rectangle" />
 
+                <div id="sign-in">
+                
+                    <div id="title">
+                        Doctor Sign In Portal
+                    </div>
+                    <form>
+                        <label>
+                            Username/CPSO ID:
+                            <input type="text" name="username" />
+                        </label>
+                        <label>
+                            Password:
+                            <input type="text" name="password" />
+                        </label>
+                        <input type="submit" value="Submit"/>
+                    </form>
+
+                </div>
             </div>
 
             <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" />
