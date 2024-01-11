@@ -1,34 +1,67 @@
-.App-link {
-    color: green;
-    padding-left: 20px;
+.main-rec{
+    display: flex;
+    z-index: 3;
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    left: 45%;
+    right: 50%;
 }
 
-.shapes {
+
+.main-rec #sign-in {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    z-index: 4;
+}
+
+.main-rec #title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 500;
+    padding-bottom: 40px;
+}
+
+
+.main-rec input[type=text]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+.main-rec input[type=submit]{
+    align-self: center;
+}
+
+.main-rec form {
+    color: green;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.center-rec {
+    width: 400px;
+    height: 500px;
 }
 
 .small-ellipse {
-    position: absolute;
+    position: fixed;
     width: 350px;
     height: 350px;
-    left: 600px;
-    top: 50px;
-}
-
-.main-rec {
-    display: flex;
-    width: 400px;
-    height: 500px;
-    /* left: 500px;
-    top: 125px; */
-    align-self: center;
-    justify-content: center;
-
+    left: 750px;
+    top: 10px;
+    z-index: 2;
 }
 
 .small-rec {
-    position: absolute;
+    position: fixed;
     width: 350px;
     height: 350px;
     left: 300px;
     top: 300px;
+    z-index: 1;
 }
