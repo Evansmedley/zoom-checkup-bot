@@ -6,9 +6,24 @@
 }
 
 .bg-sphere {
-    background-image: url(/src/assets/images/ellipse-background.png);
-    height: 100vh;
-    background-repeat: no-repeat;
+    position: relative;
+
+    .page-content {
+        z-index: 2;
+        position: relative;
+    }
+
+    &::before {
+        position: absolute;
+        z-index: 1;
+        content: '';
+        background: #258C22;
+        width: 1316px;
+        height: 1316px;
+        border-radius: 1316px;
+        right: 40%;
+        top: -30%;
+    }
 }
 
 
@@ -49,6 +64,6 @@
 }
 
 .App-link {
-    color: white;
+    color: black;
     padding-left: 20px;
   }

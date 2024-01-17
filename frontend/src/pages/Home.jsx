@@ -1,14 +1,10 @@
-import '../assets/Home.css';
-import armPic from '../assets/images/arm.png'
-import Header from './Header';
-
+import Header from '../components/Header';
 
 const Home = () => {
 
     return(
         <div className="bg-sphere">
 
-            <Header />
 
             <div className="page-content">
                 <div className="text">
@@ -23,7 +19,7 @@ const Home = () => {
                 </div>
 
 
-                <img src={armPic} className="robot-pic" alt="arm" />
+                <img src={'/assets/images/arm.png'} className="robot-pic" alt="arm" />
             
             </div>
         </div>

@@ -1,17 +1,11 @@
-import '../assets/Login.css';
-import mainRectange from '../assets/images/login-rectangle-main.png'
-import smallRectange from '../assets/images/login-rectangle-small.png'
-import smallEllipse from '../assets/images/login-ellipse-small.png'
-import Header from './Header';
-
+import Header from '../components/Header';
 
 const Login = () => {
 
     return(
         <div>
-            <Header />
             <div className="main-rec">
-            <img src={mainRectange} className="center-rec" alt="main-rectangle" />
+            {/* <img src={mainRectange} alt="main-rectangle" /> */}
 
                 <div id="sign-in">
                 
@@ -33,8 +27,14 @@ const Login = () => {
                 </div>
             </div>
 
-            <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" />
-            <img src={smallRectange} className="small-rec" alt="small-rectangle" />
+            <div className="small-ellipse">
+            </div>
+
+            <div className="small-rec">
+            </div>
+
+            {/* <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" /> */}
+            {/* <img src={smallRectange} className="small-rec" alt="small-rectangle" /> */}
         </div>
 
 

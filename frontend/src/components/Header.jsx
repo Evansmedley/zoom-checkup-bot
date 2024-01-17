@@ -1,5 +1,3 @@
-import '../assets/Header.css';
-
 
 const Header = () => {
 
