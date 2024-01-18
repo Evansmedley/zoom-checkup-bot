@@ -15,6 +15,8 @@ const Control = () => {
   const RIGHT = "RIGHT";
   const DOWN = "DOWN";
   const LEFT = "LEFT";
+  const IN = "DEPTH: IN";
+  const OUT = "DEPTH: OUT";
 
   const [selectedArrow, setSelectedArrow] = useState("No State");
 
@@ -46,6 +48,18 @@ const Control = () => {
     }
   });
 
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key === "ArrowUp") {
+      setSelectedArrow(IN);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key === "ArrowDown") {
+      setSelectedArrow(OUT);
+    }
+  });
+
   return (
     <div className="main-control">
       <div className="column left">
@@ -53,56 +67,78 @@ const Control = () => {
 
         <p>Current state: {selectedArrow}</p>
 
-        <div className="xy arrow">
-          {/* first row */}
+        <div className="all-arrows">
+          <div className="xy">
+            {/* first row */}
 
-          <div className="spacer"></div>
-          <img
-            className={`arrow up ${
-              selectedArrow === UP ? " selected" : undefined
-            }`}
-            src={"/assets/images/arrow.png"}
-            alt="up-arrow"
-            onClick={() => buttonClick(UP)}
-          />
-          <div className="spacer"></div>
+            <div className="spacer"></div>
+            <img
+              className={`arrow up ${
+                selectedArrow === UP ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="up-arrow"
+              onClick={() => buttonClick(UP)}
+            />
+            <div className="spacer"></div>
 
-          {/* second row */}
+            {/* second row */}
 
-          <img
-            className={`arrow left ${
-              selectedArrow === LEFT ? " selected" : undefined
-            }`}
-            src={"/assets/images/arrow.png"}
-            alt="left-arrow"
-            onClick={() => buttonClick(LEFT)}
-          />
+            <img
+              className={`arrow left ${
+                selectedArrow === LEFT ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="left-arrow"
+              onClick={() => buttonClick(LEFT)}
+            />
 
-          <div className="spacer"></div>
+            <div className="spacer"></div>
 
-          <img
-            className={`arrow right ${
-              selectedArrow === RIGHT ? " selected" : undefined
-            }`}
-            src={"/assets/images/arrow.png"}
-            alt="right-arrow"
-            onClick={() => buttonClick(RIGHT)}
-          />
+            <img
+              className={`arrow right ${
+                selectedArrow === RIGHT ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="right-arrow"
+              onClick={() => buttonClick(RIGHT)}
+            />
 
-          {/* third row */}
+            {/* third row */}
 
-          <div className="spacer"></div>
-          <img
-            className={`arrow down ${
-              selectedArrow === DOWN ? " selected" : undefined
-            }`}
-            src={"/assets/images/arrow.png"}
-            alt="down-arrow"
-            onClick={() => buttonClick(DOWN)}
-          />
-          <div className="spacer"></div>
+            <div className="spacer"></div>
+            <img
+              className={`arrow down ${
+                selectedArrow === DOWN ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="down-arrow"
+              onClick={() => buttonClick(DOWN)}
+            />
+            <div className="spacer"></div>
+          </div>
+
+          <div className="depth arrow">
+            <img
+              className={`arrow in ${
+                selectedArrow === IN ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="in-arrow"
+              onClick={() => buttonClick(IN)}
+            />
+            <img
+              className={`arrow out ${
+                selectedArrow === OUT ? " selected" : undefined
+              }`}
+              src={"/assets/images/arrow.png"}
+              alt="out-arrow"
+              onClick={() => buttonClick(OUT)}
+            />
+          </div>
         </div>
       </div>
+
       <div className="column">
         Notes <br />
         <textarea

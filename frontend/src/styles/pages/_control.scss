@@ -6,21 +6,33 @@
     outline: 4px solid grey;
 }
 
-.arrow{
+.all-arrows{
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+}
+
+.xy{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+}
+
+.depth{
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+}
+
+.arrow{
     width: 5rem;
     height: 5rem;
+
 
     .spacer{
         grid-area: auto;
     }
 
-    .up{
-
-    }
-
-    .down{
+    .down, .out{
         transform: rotate(180deg);
     }
 
@@ -39,11 +51,6 @@
     width: 50%;
     padding: 10px;
     resize: horizontal;
-
-    // .left {
-    //     display: flex;
-    //     flex-direction: column;
-    // }
 }
 
 /* Clear floats after the columns */
