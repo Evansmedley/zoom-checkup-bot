@@ -1,31 +1,116 @@
-import Header from "../components/Header";
+import { useState } from "react";
 
 const Control = () => {
+  const download = () => {
+    const noteContent = document.getElementById("notes").value;
+    const filename = document.getElementById("filename").value || "final_notes";
+    const blob = new Blob([noteContent], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `${filename}.txt`;
+    link.click();
+  };
 
-    const download = () => {
-        const noteContent = document.getElementById('notes').value;
-        const filename = document.getElementById('filename').value || 'final_notes';
-        const blob = new Blob([noteContent], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `${filename}.txt`;
-        link.click();
-    };
+  const UP = "UP";
+  const RIGHT = "RIGHT";
+  const DOWN = "DOWN";
+  const LEFT = "LEFT";
 
-    return(
+  const [selectedArrow, setSelectedArrow] = useState("No State");
 
-        <div class="main-control">
-            <div class="column">*Add livestream here*</div>
-            <div class="column">
-                Notes <br />
-                <textarea id="notes" class="notes" rows="15" cols="70" placeholder="Write notes here..." download="final_notes"></textarea>
-                <br /><br />
-                <button class="saveBtn" onClick={download}> Download</button>
-                <input id="filename" class="filename" placeholder="Specify a filename…" />
-            </div>
+  const buttonClick = (selectedDiv) => {
+    setSelectedArrow(selectedDiv);
+  };
+
+  const [key, setkey] = useState();
+  const keyDown = (event) => {
+    setkey(event.key);
+  };
+
+  return (
+    <div class="main-control">
+      <div class="column left">
+        <p>*Add livestream here*</p>
+
+        <p>Current state: {selectedArrow}</p>
+
+        {key ? <h2>Pressed Key : {key}</h2> : null}
+
+        <div className="xy arrow">
+          {/* first row */}
+
+          <div className="spacer"></div>
+          <img
+            className={`arrow up ${
+              selectedArrow === UP ? " selected" : undefined
+            }`}
+            src={"/assets/images/arrow.png"}
+            alt="up-arrow"
+            onClick={() => buttonClick(UP)}
+            onKeyDown={keyDown}
+          />
+          <div className="spacer"></div>
+
+          {/* second row */}
+
+          <img
+            className={`arrow left ${
+              selectedArrow === LEFT ? " selected" : undefined
+            }`}
+            src={"/assets/images/arrow.png"}
+            alt="left-arrow"
+            onClick={() => buttonClick(LEFT)}
+          />
+
+          <div className="spacer"></div>
+
+          <img
+            className={`arrow right ${
+              selectedArrow === RIGHT ? " selected" : undefined
+            }`}
+            src={"/assets/images/arrow.png"}
+            alt="right-arrow"
+            onClick={() => buttonClick(RIGHT)}
+          />
+
+          {/* third row */}
+
+          <div className="spacer"></div>
+          <img
+            className={`arrow down ${
+              selectedArrow === DOWN ? " selected" : undefined
+            }`}
+            src={"/assets/images/arrow.png"}
+            alt="down-arrow"
+            onClick={() => buttonClick(DOWN)}
+          />
+          <div className="spacer"></div>
         </div>
-    )
+      </div>
+      <div class="column">
+        Notes <br />
+        <textarea
+          id="notes"
+          class="notes"
+          rows="15"
+          cols="70"
+          placeholder="Write notes here..."
+          download="final_notes"
+        ></textarea>
+        <br />
+        <br />
+        <button class="saveBtn" onClick={download}>
+          {" "}
+          Download
+        </button>
+        <input
+          id="filename"
+          class="filename"
+          placeholder="Specify a filename…"
+        />
+      </div>
+    </div>
+  );
 };
-
 
 export default Control;

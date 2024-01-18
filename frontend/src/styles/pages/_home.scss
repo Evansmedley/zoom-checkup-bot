@@ -1,8 +1,6 @@
 .robot-pic {
-    width: 512px;
-    height: 561px;
-
-    background-repeat: no-repeat;   
+    width: 32rem;
+    height: 35rem;
 }
 
 .bg-sphere {
@@ -18,9 +16,9 @@
         z-index: 1;
         content: '';
         background: #258C22;
-        width: 1316px;
+        width: 82rem;
         height: 1316px;
-        border-radius: 1316px;
+        border-radius: 82rem;
         right: 40%;
         top: -30%;
     }

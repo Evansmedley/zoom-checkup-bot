@@ -2,11 +2,48 @@
     box-sizing: border-box;
 }
 
+.selected {
+    outline: 4px solid grey;
+}
+
+.arrow{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 5rem;
+    height: 5rem;
+
+    .spacer{
+        grid-area: auto;
+    }
+
+    .up{
+
+    }
+
+    .down{
+        transform: rotate(180deg);
+    }
+
+    .right{
+        transform: rotate(90deg);
+    }
+
+    .left{
+        transform: rotate(270deg);
+    }
+
+}
+
 .column {
     float: left;
     width: 50%;
     padding: 10px;
-    resize: horizontal
+    resize: horizontal;
+
+    // .left {
+    //     display: flex;
+    //     flex-direction: column;
+    // }
 }
 
 /* Clear floats after the columns */
