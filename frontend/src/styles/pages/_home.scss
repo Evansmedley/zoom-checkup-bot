@@ -1,27 +1,31 @@
 .robot-pic {
+    position: absolute;
     width: 32rem;
     height: 35rem;
+    z-index: 5;
+    right: 15%;
+}
+
+.bg-square {
+    position: absolute;
+    background: #258C22;
+    width: 50rem;
+    height: 100%;
+    z-index: 1;
+    right: 60%;
 }
 
 .bg-sphere {
-    position: relative;
-
-    .page-content {
-        z-index: 2;
-        position: relative;
-    }
-
-    &::before {
-        position: absolute;
-        z-index: 1;
-        content: '';
-        background: #258C22;
-        width: 82rem;
-        height: 1316px;
-        border-radius: 82rem;
-        right: 40%;
-        top: -30%;
-    }
+    position: absolute;
+    z-index: 2;
+    background: #258C22;
+    width: 82rem;
+    height: 1316px;
+    border-radius: 82rem;
+    right: 40%;
+    top: -30%;
+    min-width: 30%;
+    
 }
 
 
@@ -31,15 +35,15 @@
 
 .text {
     color: white;
+    z-index: 4;
 
     display : flex;
     flex-direction: column;
-    padding-left: 70px;
+    padding-left: 6rem;
+    padding-top: 15rem;
 
-    padding-top: 18%;
-
-    width: 644px;
-    height: 67px;
+    width: 50%;
+    height: 5rem;
     
 }
 
@@ -49,8 +53,6 @@
     font-weight: 700;
     line-height: normal;
     padding-bottom: 25px;
-
-
 }
 
 #subText {
