@@ -1,0 +1,12 @@
+@import "./components/header";
+@import "./pages/contact";
+@import "./pages/control";
+@import "./pages/home";
+@import "./pages/index";
+@import "./pages/login";
+
+body {
+    max-height: 100vh;
+    overflow-y: hidden;
+
+}

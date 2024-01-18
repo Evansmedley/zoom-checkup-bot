@@ -1,1 +1,0 @@
-#checkup-bot-robot-endpoint
