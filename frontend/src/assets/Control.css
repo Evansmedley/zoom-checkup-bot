@@ -1,0 +1,57 @@
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  resize: horizontal
+}
+
+/* Clear floats after the columns */
+.main-control:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+ /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+} 
+
+.notes {
+  background: #f0ffef;
+  padding: 10px;
+  border-radius: 14px;
+  width:100%;
+  resize: vertical;
+  white-space: pre-wrap
+}
+
+.filename {
+  border: 1px solid #0b293d;
+  height: 30px;
+  line-height: 50px;
+  border-radius: 7px;
+  float: right;
+}
+
+.saveBtn {
+  background-color: #328de2;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 7px;
+  margin-top: 3px;
+  float: right;
+  cursor: pointer
+}
+
+.saveBtn:hover {
+  background-color: #357fc3;
+} 
+
