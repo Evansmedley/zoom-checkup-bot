@@ -74,6 +74,11 @@ def move_bot(key_press: str) -> None:
     # swivel of claw controlled by Motor 5 (keys left and right)
     # opening of claw controlled by Motor 6 (keys up and down)
     # space bar to reset to default position
+
+    if key_press == "space_bar":
+        time.sleep(5)
+        reset_robot()
+
     key_dict = {
         'A': (angle1, STEP_ANGLE),
         'D': (angle1, 0-STEP_ANGLE),
@@ -86,13 +91,15 @@ def move_bot(key_press: str) -> None:
         'left': (angle5, STEP_ANGLE),
         'right': (angle5, 0-STEP_ANGLE),
         'up': (angle6, STEP_ANGLE),
-        'down': (angle6, 0-STEP_ANGLE)
+        'down': (angle6, 0-STEP_ANGLE),
     }
 
     key_value = key_dict.get(key_press)
     motor_angle, new_step_angle = key_value
 
     motor_angle = boundaries(motor_angle.curr_angle + new_step_angle, motor_angle)
+    Arm.Arm_serial_servo_write(motor_angle.motor_id, motor_angle.curr_angle, motor_angle.time_run)
+    time.sleep(0.01)
 
 def grab_tool():
     pass
@@ -100,6 +107,11 @@ def grab_tool():
 
 if __name__ == "__main__":
     reset_robot()
+    th1 = threading.Thread(target=move_bot)
+    th1.setDaemon(True)
+    th1.start()
+
+    # need to add a error handler
 
     # Stops arm
     del Arm
