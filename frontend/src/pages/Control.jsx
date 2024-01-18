@@ -31,7 +31,7 @@ const Control = () => {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key == "d" || event.key === "D") {
+    if (event.isComposing || event.key === "d" || event.key === "D") {
       setSelectedArrow(RIGHT);
     }
   });
@@ -66,9 +66,32 @@ const Control = () => {
         <p>*Add livestream here*</p>
 
         <p>Current state: {selectedArrow}</p>
+      </div>
 
+      <div className="column">
+        <div className="notes">
+          Notes <br />
+          <textarea
+            id="notes"
+            rows="15"
+            cols="70"
+            placeholder="Write notes here..."
+            download="final_notes"
+          ></textarea>
+          <br />
+          <br />
+          <button className="saveBtn" onClick={download}>
+            {" "}
+            Download
+          </button>
+          <input
+            id="filename"
+            className="filename"
+            placeholder="Specify a filename…"
+          />
+        </div>
         <div className="all-arrows">
-          <div className="xy">
+          <div className="xy arrow">
             {/* first row */}
 
             <div className="spacer"></div>
@@ -137,29 +160,6 @@ const Control = () => {
             />
           </div>
         </div>
-      </div>
-
-      <div className="column">
-        Notes <br />
-        <textarea
-          id="notes"
-          className="notes"
-          rows="15"
-          cols="70"
-          placeholder="Write notes here..."
-          download="final_notes"
-        ></textarea>
-        <br />
-        <br />
-        <button className="saveBtn" onClick={download}>
-          {" "}
-          Download
-        </button>
-        <input
-          id="filename"
-          className="filename"
-          placeholder="Specify a filename…"
-        />
       </div>
     </div>
   );
