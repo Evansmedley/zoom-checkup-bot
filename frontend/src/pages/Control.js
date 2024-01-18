@@ -6,9 +6,9 @@ import Header from './Header';
 const Control = () => {
 
     const download = () => {
-        const textareaContent = document.getElementById('notes').value;
+        const noteContent = document.getElementById('notes').value;
         const filename = document.getElementById('filename').value || 'final_notes';
-        const blob = new Blob([textareaContent], { type: 'text/plain' });
+        const blob = new Blob([noteContent], { type: 'text/plain' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = `${filename}.txt`;
