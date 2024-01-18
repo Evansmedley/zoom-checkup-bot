@@ -22,19 +22,36 @@ const Control = () => {
     setSelectedArrow(selectedDiv);
   };
 
-  const [key, setkey] = useState();
-  const keyDown = (event) => {
-    setkey(event.key);
-  };
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key === "a" || event.key === "A") {
+      setSelectedArrow(LEFT);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key == "d" || event.key === "D") {
+      setSelectedArrow(RIGHT);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key === "w" || event.key === "W") {
+      setSelectedArrow(UP);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.isComposing || event.key === "s" || event.key === "S") {
+      setSelectedArrow(DOWN);
+    }
+  });
 
   return (
-    <div class="main-control">
-      <div class="column left">
+    <div className="main-control">
+      <div className="column left">
         <p>*Add livestream here*</p>
 
         <p>Current state: {selectedArrow}</p>
-
-        {key ? <h2>Pressed Key : {key}</h2> : null}
 
         <div className="xy arrow">
           {/* first row */}
@@ -47,7 +64,6 @@ const Control = () => {
             src={"/assets/images/arrow.png"}
             alt="up-arrow"
             onClick={() => buttonClick(UP)}
-            onKeyDown={keyDown}
           />
           <div className="spacer"></div>
 
@@ -87,11 +103,11 @@ const Control = () => {
           <div className="spacer"></div>
         </div>
       </div>
-      <div class="column">
+      <div className="column">
         Notes <br />
         <textarea
           id="notes"
-          class="notes"
+          className="notes"
           rows="15"
           cols="70"
           placeholder="Write notes here..."
@@ -99,13 +115,13 @@ const Control = () => {
         ></textarea>
         <br />
         <br />
-        <button class="saveBtn" onClick={download}>
+        <button className="saveBtn" onClick={download}>
           {" "}
           Download
         </button>
         <input
           id="filename"
-          class="filename"
+          className="filename"
           placeholder="Specify a filename…"
         />
       </div>
