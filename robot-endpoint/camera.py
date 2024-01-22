@@ -1,36 +1,16 @@
-import cv2 as cv
-import threading
-from time import sleep
-import ipywidgets as widgets
-from IPython.display import display
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
+import ipywidgets.widgets as widgets
 
-class RobotAuto:
+def bgr8_to_jpeg(value, quality=75):
+    return bytes(cv2.imencode('.jpg', value)[1])
 
-    def find_mouth(self, img):
-        """Finds the mouth and draws a bounding box
-        """
-        pass
-    
-    def find_funny_bone(self, img):
-        """Finds the ulnar name and draws bounding box
-        """
-        pass
+camera = cv2.VideoCapture(0)
+camera.set(3, 640)
+camera.set(4, 480)
 
-    def flashlight(self, button: bool):
-        """Turns on and off the flashlight
-        """
-        pass
-
-def camera_start():
-    cam = cv.VideoCapture(0)
-    while cam.isOpened():
-        try:
-            ret, img = cam.read()
-            img = cv.resize(img, (640, 480))
-        except KeyboardInterrupt:cam.release()
-
-
-camera_start()
-
-
+# camera widget
+image_widget = widgets.Image(format='jpeg', width=600, height=500) 
 
