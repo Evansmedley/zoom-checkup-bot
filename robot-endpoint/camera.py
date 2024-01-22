@@ -4,8 +4,6 @@ from time import sleep
 import ipywidgets as widgets
 from IPython.display import display
 
-cam = cv.VideoCapture(0)
-
 class RobotAuto:
 
     def find_mouth(self, img):
