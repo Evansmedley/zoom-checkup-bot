@@ -1,3 +1,7 @@
+import Slider from "@mui/material/Slider";
+import * as React from "react";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useState } from "react";
 
 const Control = () => {
@@ -11,61 +15,82 @@ const Control = () => {
     link.click();
   };
 
-  const UP = "UP";
-  const RIGHT = "RIGHT";
-  const DOWN = "DOWN";
-  const LEFT = "LEFT";
-  const IN = "DEPTH: IN";
-  const OUT = "DEPTH: OUT";
+  const [arm, setArm] = useState("one");
+  const [leftLabel, setLeftLabel] = useState("Left");
+  const [rightLabel, setRightLabel] = useState("Right");
 
-  const [selectedArrow, setSelectedArrow] = useState("No State");
+  const marks = [
+    {
+      value: 0,
+      label: leftLabel,
+    },
+    {
+      value: 100,
+      label: rightLabel,
+    },
+  ];
 
-  const buttonClick = (selectedDiv) => {
-    setSelectedArrow(selectedDiv);
+  const handleLabel = (newArm) => {
+    if (newArm === "one") {
+      setLeftLabel("Left");
+      setRightLabel("Right");
+    } else if (newArm === "five") {
+      setLeftLabel("Counter");
+      setRightLabel("Clockwise");
+    } else if (newArm === "six") {
+      setLeftLabel("Close");
+      setRightLabel("Open");
+    } else if (newArm === "two" || newArm === "three" || newArm === "four") {
+      setLeftLabel("Down");
+      setRightLabel("Up");
+    }
   };
 
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "a" || event.key === "A") {
-      setSelectedArrow(LEFT);
+  const handleChangeArm = (event, newArm) => {
+    if (newArm !== null) {
+      fetch("/changeArm", {
+        method: "POST",
+        body: JSON.stringify({
+          arm: newArm,
+        }),
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+      setArm(newArm);
+      console.log("setting arm: " + newArm);
+      handleLabel(newArm);
     }
-  });
+  };
 
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "d" || event.key === "D") {
-      setSelectedArrow(RIGHT);
-    }
-  });
+  const [slider, setSlider] = useState(30);
 
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "w" || event.key === "W") {
-      setSelectedArrow(UP);
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "s" || event.key === "S") {
-      setSelectedArrow(DOWN);
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "ArrowUp") {
-      setSelectedArrow(IN);
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.isComposing || event.key === "ArrowDown") {
-      setSelectedArrow(OUT);
-    }
-  });
+  const handleChangeSlider = (event, newValue) => {
+    fetch("/changeSlider", {
+      method: "POST",
+      body: JSON.stringify({
+        move: newValue,
+      }),
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+    setSlider(newValue);
+  };
 
   return (
     <div className="main-control">
       <div className="column left">
         <p>*Add livestream here*</p>
 
-        <p>Current state: {selectedArrow}</p>
+        <p>Current arm: {arm}</p>
+        <p>Current state: {slider}</p>
       </div>
 
       <div className="column">
@@ -90,73 +115,29 @@ const Control = () => {
             placeholder="Specify a filename…"
           />
         </div>
-        <div className="all-arrows">
-          <div className="xy arrow">
-            {/* first row */}
+        <div>
+          <ToggleButtonGroup
+            color="primary"
+            value={arm}
+            exclusive
+            onChange={handleChangeArm}
+            aria-label="Platform"
+          >
+            <ToggleButton value="one">1</ToggleButton>,
+            <ToggleButton value="two">2</ToggleButton>,
+            <ToggleButton value="three">3</ToggleButton>,
+            <ToggleButton value="four">4</ToggleButton>,
+            <ToggleButton value="five">5</ToggleButton>,
+            <ToggleButton value="six">6</ToggleButton>
+          </ToggleButtonGroup>
 
-            <div className="spacer"></div>
-            <img
-              className={`arrow up ${
-                selectedArrow === UP ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="up-arrow"
-              onClick={() => buttonClick(UP)}
-            />
-            <div className="spacer"></div>
-
-            {/* second row */}
-
-            <img
-              className={`arrow left ${
-                selectedArrow === LEFT ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="left-arrow"
-              onClick={() => buttonClick(LEFT)}
-            />
-
-            <div className="spacer"></div>
-
-            <img
-              className={`arrow right ${
-                selectedArrow === RIGHT ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="right-arrow"
-              onClick={() => buttonClick(RIGHT)}
-            />
-
-            {/* third row */}
-
-            <div className="spacer"></div>
-            <img
-              className={`arrow down ${
-                selectedArrow === DOWN ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="down-arrow"
-              onClick={() => buttonClick(DOWN)}
-            />
-            <div className="spacer"></div>
-          </div>
-
-          <div className="depth arrow">
-            <img
-              className={`arrow in ${
-                selectedArrow === IN ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="in-arrow"
-              onClick={() => buttonClick(IN)}
-            />
-            <img
-              className={`arrow out ${
-                selectedArrow === OUT ? " selected" : undefined
-              }`}
-              src={"/assets/images/arrow.png"}
-              alt="out-arrow"
-              onClick={() => buttonClick(OUT)}
+          <div>
+            <Slider
+              aria-label="Default"
+              valueLabelDisplay="auto"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
             />
           </div>
         </div>
