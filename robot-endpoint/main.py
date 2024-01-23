@@ -2,7 +2,7 @@ from Arm_Lib import Arm_Device
 import threading
 import os
 import time
-from movements import set_all_angles, BotActions
+from movements import set_all_angles, Move_Motors
 
 PI_IP = "192.68.123.68"
 
@@ -33,29 +33,18 @@ if __name__ == "__main__":
     Arm = Arm_Device()
     time.sleep(.1)
 
-    angle1, angle2, angle3, angle4, angle5, angle6 = set_all_angles()
-    move_bot = BotActions(Arm, angle1, angle2, angle3, angle4, angle5, angle6)
+    motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
+    move_bot = Move_Motors(Arm, motor1, motor2, motor3, motor4, motor5, motor6)
 
+    move_bot.reset_motors()
     while True:
-        req = recieve_request()
-        if not req:
+        motor_num, angle = recieve_request()
+        if motor_num is None and angle is None:
             pass
-        if "reset" == req:
-            move_bot.reset_motors()
-        elif "open_claw" == req:
-            move_bot.open_claw()
-        elif "close_claw" == req:
-            move_bot.close_claw()
-        elif "turn_right" == req:
-            move_bot.turn_right()
-        elif "turn_left" == req:
-            move_bot.turn_left()
-        elif "move_forwards" == req:
-            move_bot.move_forwards()
-        elif "move_backwards" == req:
-            move_bot.move_backwards()
-        elif "exit" == req:
-            break
+        else:
+            move_bot.set_motor(angle, motor_num)
+        motor_num, angle = None, None
+        
     # th1 = threading.Thread(target=move_bot)
     # th1.setDaemon(True)
     # th1.start()
