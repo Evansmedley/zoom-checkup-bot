@@ -3,7 +3,7 @@ import threading
 from Arm_Lib import Arm_Device
 from dataclasses import dataclass
 
-MOVEMENT_TIME = 100
+MOVEMENT_TIME = 1000
 STEP_ANGLE = 15
 STEP_ANGLE_MOV = 10
 
@@ -18,18 +18,18 @@ class MotorAngle:
 class BotActions:
     """Bot Action Class
     """
-    def __init__(self, Arm, angle1, angle2, angle3, angle4, angle5, angle6) -> None:
+    def __init__(self, Arm, motor1, motor2, motor3, motor4, motor5, motor6) -> None:
         self.Arm = Arm
-        self.angle1 = angle1
-        self.angle2 = angle2
-        self.angle3 = angle3
-        self.angle4 = angle4
-        self.angle5 = angle5
-        self.angle6 = angle6
+        self.motor1 = motor1
+        self.motor2 = motor2
+        self.motor3 = motor3
+        self.motor4 = motor4
+        self.motor5 = motor5
+        self.motor6 = motor6
 
         self.reset_motors()
 
-    def boundaries(self, next_angle: float, angle_num: MotorAngle) -> MotorAngle:
+    def boundaries(self, next_angle: int, angle_num: MotorAngle) -> int:
         """ Forces the robot to stay within the boundaries
 
         Args:
@@ -51,17 +51,17 @@ class BotActions:
         """ 
         Resets all motor angles after a delay of 3 seconds
         """
-        time.sleep(3)
-        buzzer_time = 1 # Alert with buzzer
-        self.Arm.Arm_Buzzer_On(buzzer_time)
         time.sleep(1)
+        # buzzer_time = 1 # Alert with buzzer
+        # self.Arm.Arm_Buzzer_On(buzzer_time)
+        # time.sleep(1)
 
-        # Closed buzzer
-        self.Arm.Arm_Buzzer_Off()
-        time.sleep(1)
+        # # Closed buzzer
+        # self.Arm.Arm_Buzzer_Off()
+        # time.sleep(1)
 
         # Set to default position
-        self.Arm.Arm_serial_servo_write6(0, 90, 90, 90, 90, 90, 500)
+        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 165, 500)
         time.sleep(1)
 
         self.update_position()
@@ -70,12 +70,12 @@ class BotActions:
         """
         Updates the location of all motor angles
         """
-        self.angle1.curr_angle = self.Arm.Arm_serial_servo_read(self.angle1.motor_id)
-        self.angle2.curr_angle = self.Arm.Arm_serial_servo_read(self.angle2.motor_id)
-        self.angle3.curr_angle = self.Arm.Arm_serial_servo_read(self.angle3.motor_id)
-        self.angle4.curr_angle = self.Arm.Arm_serial_servo_read(self.angle4.motor_id)
-        self.angle5.curr_angle = self.Arm.Arm_serial_servo_read(self.angle5.motor_id)
-        self.angle6.curr_angle = self.Arm.Arm_serial_servo_read(self.angle6.motor_id)
+        self.motor1.curr_angle = self.Arm.Arm_serial_servo_read(self.motor1.motor_id)
+        self.motor2.curr_angle = self.Arm.Arm_serial_servo_read(self.motor2.motor_id)
+        self.motor3.curr_angle = self.Arm.Arm_serial_servo_read(self.motor3.motor_id)
+        self.motor4.curr_angle = self.Arm.Arm_serial_servo_read(self.motor4.motor_id)
+        self.motor5.curr_angle = self.Arm.Arm_serial_servo_read(self.motor5.motor_id)
+        self.motor6.curr_angle = self.Arm.Arm_serial_servo_read(self.motor6.motor_id)
 
     def set_motor(self, motor: MotorAngle, ang: int) -> None:
         """
@@ -85,65 +85,101 @@ class BotActions:
             motor (MotorAngle): motor to set
             ang (int): angle to set
         """
-        self.Arm.Arm_serial_servo_write(motor.motor_id, ang, motor.time_run)
-        time.sleep(0.5)
-        self.update_position()
+        new_angle = self.boundaries(ang, motor)
+        self.Arm.Arm_serial_servo_write(motor.motor_id, new_angle, motor.time_run)
 
     def open_claw(self) -> None:
         """
         Opens end effector
         """
-        self.set_motor(self.angle6.motor_id, self.angle6.max_angle)
+        self.set_motor(self.motor6.motor_id, self.motor6.max_angle)
     
     def close_claw(self) -> None:
         """
         Closes end effector
         """
-        motor_angle = self.boundaries(self.angle6.curr_angle + STEP_ANGLE, self.angle6)
-        self.set_motor(self.angle6, motor_angle)
+        motor_angle = self.boundaries(self.motor6.curr_angle + STEP_ANGLE, self.motor6)
+        self.set_motor(self.motor6, motor_angle)
     
     def turn_right(self) -> None:
         """
         Turns robot right
         """
-        motor_angle = self.boundaries(self.angle1.curr_angle - STEP_ANGLE_MOV, self.angle1)
-        self.set_motor(self.angle1, motor_angle)
+        motor_angle = self.boundaries(self.motor1.curr_angle - STEP_ANGLE_MOV, self.motor1)
+        self.set_motor(self.motor1, motor_angle)
     
     def turn_left(self) -> None:
         """
         Turns robot left
         """
-        motor_angle = self.boundaries(self.angle1.curr_angle + STEP_ANGLE_MOV, self.angle1)
-        self.set_motor(self.angle1, motor_angle)
+        motor_angle = self.boundaries(self.motor1.curr_angle + STEP_ANGLE_MOV, self.motor1)
+        self.set_motor(self.motor1, motor_angle)
 
     def move_forwards(self) -> None:
         """
         Moves robot forward
         """
-        # TODO: change move forwards so end effector remains parallel with the table when moving
-        self.angle2.curr_angle = 90
-        self.angle3.curr_angle = 0
-        self.angle4.curr_angle = 90
-
-        self.set_motor(self.angle2, self.angle2.curr_angle)
-        self.set_motor(self.angle3, self.angle3.curr_angle)
-        self.set_motor(self.angle4, self.angle4.curr_angle)
+        if self.motor4.curr_angle < 90:
+            self.motor2.curr_angle = self.motor2.curr_angle - 5
+            self.motor4.curr_angle = self.motor4.curr_angle + 5
+            self.set_motor(self.motor2, self.motor2.curr_angle)
+            time.sleep(0.02)
+            print(self.motor2.curr_angle)
+            self.set_motor(self.motor4, self.motor4.curr_angle)
+            time.sleep(0.1)
 
     def move_backwards(self) -> None:
         """
         Moves Robot backwards
         """
-        # TODO: change move backwards so end effector remains parallel with the table when moving
-        self.set_motor(self.angle2, self.angle2.curr_angle)
-        self.set_motor(self.angle3, self.angle3.curr_angle)
-        self.set_motor(self.angle4, self.angle4.curr_angle)
+        STEP_ANGLE 
+        self.motor2.curr_angle = self.motor2.curr_angle + 5
+        self.motor4.curr_angle = self.motor4.curr_angle - 5
+        self.set_motor(self.motor2, self.motor2.curr_angle)
+        time.sleep(0.02)
+        self.set_motor(self.motor4, self.motor4.curr_angle)
+        time.sleep(0.1)
+        print(self.motor2.curr_angle)
+        
+    def test_forwards(self):
+        self.set_motor(self.motor4, 90)
+        time.sleep(0.1)
+        t_d = self.time_duration(self.motor2.curr_angle, 0)
+        self.set_motor(self.motor2, 0)
+        time.sleep(t_d)
+#         while self.motor4.curr_angle < 90:
+#             self.move_forwards()
+        while True:
+            try:
+                pass
+                self.move_backwards()
+            except KeyboardInterrupt:
+                break
+    def robot_constraints(self):
+        """ Set so it doesn't slam into the floor"""
+        pass
+
+    def time_duration(self, current_angle, final_angle) -> float:
+        """Time to move the robot
+
+        Args:
+            current_angle (_type_): _description_
+            final_angle (_type_): _description_
+
+        Returns:
+            float: _description_
+        """
+        # for 90 degrees it takes 1 second
+        time_per_angle = 1/90
+        return abs(final_angle - current_angle) * time_per_angle
+
 
 def set_all_angles():
-    angle1 = MotorAngle(1, 0, 180, 0, MOVEMENT_TIME)
-    angle2 = MotorAngle(2, 0, 180, 90, MOVEMENT_TIME)
-    angle3 = MotorAngle(3, 0, 180, 90, MOVEMENT_TIME)
-    angle4 = MotorAngle(4, 0, 180, 90, MOVEMENT_TIME)
-    angle5 = MotorAngle(5, 0, 180, 90, MOVEMENT_TIME)
-    angle6 = MotorAngle(6, 0, 165, 90, 500)
+    motor1 = MotorAngle(1, 0, 180, 90, MOVEMENT_TIME)
+    motor2 = MotorAngle(2, 0, 110, 90, MOVEMENT_TIME)
+    motor3 = MotorAngle(3, 0, 180, 90, MOVEMENT_TIME)
+    motor4 = MotorAngle(4, 0, 180, 0, MOVEMENT_TIME)
+    motor5 = MotorAngle(5, 0, 180, 90, MOVEMENT_TIME)
+    motor6 = MotorAngle(6, 0, 165, 165, 500)
 
-    return angle1, angle2, angle3, angle4, angle5, angle6
+    return motor1, motor2, motor3, motor4, motor5, motor6
