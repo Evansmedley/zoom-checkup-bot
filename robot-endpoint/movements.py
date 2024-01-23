@@ -65,6 +65,17 @@ class BotActions:
         time.sleep(1)
 
         self.update_position()
+  
+    def print_position(self) -> None:
+        """
+        Updates the location of all motor angles
+        """
+        print(self.motor1.motor_id, self.Arm.Arm_serial_servo_read(self.motor1.motor_id))
+        print(self.motor2.motor_id, self.Arm.Arm_serial_servo_read(self.motor2.motor_id))
+        print(self.motor3.motor_id, self.Arm.Arm_serial_servo_read(self.motor3.motor_id))
+        print(self.motor4.motor_id, self.Arm.Arm_serial_servo_read(self.motor4.motor_id))
+        print(self.motor5.motor_id, self.Arm.Arm_serial_servo_read(self.motor5.motor_id))
+        print(self.motor6.motor_id, self.Arm.Arm_serial_servo_read(self.motor6.motor_id))
 
     def update_position(self) -> None:
         """
@@ -176,9 +187,9 @@ class BotActions:
 
 def set_all_angles():
     motor1 = MotorAngle(1, 0, 180, 90, MOVEMENT_TIME)
-    motor2 = MotorAngle(2, 0, 110, 90, MOVEMENT_TIME)
+    motor2 = MotorAngle(2, 0, 130, 90, MOVEMENT_TIME)
     motor3 = MotorAngle(3, 0, 180, 90, MOVEMENT_TIME)
-    motor4 = MotorAngle(4, 0, 180, 0, MOVEMENT_TIME)
+    motor4 = MotorAngle(4, -40, 180, 0, MOVEMENT_TIME)
     motor5 = MotorAngle(5, 0, 180, 90, MOVEMENT_TIME)
     motor6 = MotorAngle(6, 0, 165, 165, 500)
 
