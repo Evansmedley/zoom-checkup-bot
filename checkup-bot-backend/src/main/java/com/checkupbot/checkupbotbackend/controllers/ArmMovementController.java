@@ -1,4 +1,4 @@
-package com.checkupbot.checkupbotbackend;
+package com.checkupbot.checkupbotbackend.controllers;
 
 import com.checkupbot.checkupbotbackend.Requests.ChangeArmRequest;
 import com.checkupbot.checkupbotbackend.Requests.ChangeSliderRequest;
