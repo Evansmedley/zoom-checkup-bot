@@ -4,6 +4,13 @@ from Arm_Lib import Arm_Device
 from dataclasses import dataclass
 
 MOVEMENT_TIME = 1000
+# Tested constraints manually
+
+limits = {
+    [90, 180, 90, 90, 90, 90], # flat back DO NOT MOVE 3, 4 below 90
+    [90, 0, 90, 60, 90, 90],  # lowest forward with motor 2 at 0
+    [90, 50, 0, 60, 90, 90],  # lowest forward with motor 3 at 0
+}
 
 @dataclass
 class Motors:
