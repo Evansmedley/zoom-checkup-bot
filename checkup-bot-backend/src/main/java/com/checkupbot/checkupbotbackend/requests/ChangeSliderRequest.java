@@ -1,4 +1,4 @@
-package com.checkupbot.checkupbotbackend.Requests;
+package com.checkupbot.checkupbotbackend.requests;
 
 public class ChangeSliderRequest {
 
