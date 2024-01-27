@@ -3,7 +3,6 @@ package com.checkupbot.checkupbotbackend.documents;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.net.URL;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -69,7 +68,7 @@ public class RoboticArmEndpoint {
     }
 
     public String getUri() {
-        return "http://" + this.ip + ":" + this.port + "/" + uuid;
+        return "http://" + this.ip + ":" + this.port;
     }
 
     @Override

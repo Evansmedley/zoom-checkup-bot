@@ -114,4 +114,9 @@ public class RoboticArmEndpointRegistrationControllerTest {
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
         assertEquals(roboticArmEndpoints.get(0), response.getBody());
     }
+
+    @Test
+    public void addExistingEndpoint() {
+        // TODO
+    }
 }
