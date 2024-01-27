@@ -3,7 +3,6 @@ import threading
 import os
 import time
 from movements import set_all_angles, Move_Motors
-from http_client import register
 
 PI_IP = "192.68.123.68"
 

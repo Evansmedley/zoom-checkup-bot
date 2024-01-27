@@ -4,8 +4,10 @@ import com.checkupbot.checkupbotbackend.documents.RoboticArmEndpoint;
 import com.checkupbot.checkupbotbackend.repositories.RoboticArmEndpointRepository;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,11 +19,13 @@ import org.springframework.http.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(MockitoExtension.class)
 public class RoboticArmEndpointRegistrationControllerTest {
 
     @Value(value = "${local.server.port}")
@@ -104,7 +108,7 @@ public class RoboticArmEndpointRegistrationControllerTest {
     public void deleteEndpoint() {
 
         // GIVEN
-        String resourceUrl = "http://localhost:" + port + "/endpoint/" + roboticArmEndpoints.get(0).getUuid() + "/delete";
+        String resourceUrl = "http://localhost:" + port + "/endpoint/" + roboticArmEndpoints.get(0).getUuid();
 
         // WHEN
         ResponseEntity<RoboticArmEndpoint> response = restTemplate.exchange(resourceUrl, HttpMethod.DELETE, null, RoboticArmEndpoint.class);
@@ -117,6 +121,24 @@ public class RoboticArmEndpointRegistrationControllerTest {
 
     @Test
     public void addExistingEndpoint() {
-        // TODO
+
+        // GIVEN
+        HttpEntity<RoboticArmEndpoint> request = new HttpEntity<>(roboticArmEndpoints.get(0));
+        String resourceUrl = "http://localhost:" + port + "/endpoint/register";
+        restTemplate.postForEntity(resourceUrl, request, RoboticArmEndpoint.class);
+
+        RoboticArmEndpoint modifiedRoboticArmEndpoint = roboticArmEndpoints.get(0);
+        modifiedRoboticArmEndpoint.setUuid(UUID.randomUUID().toString());
+        HttpEntity<RoboticArmEndpoint> sameEndpointDifferentUuidRequest =
+                new HttpEntity<>(modifiedRoboticArmEndpoint);
+
+        // WHEN
+        ResponseEntity<RoboticArmEndpoint> response = restTemplate.postForEntity(
+                resourceUrl, sameEndpointDifferentUuidRequest, RoboticArmEndpoint.class);
+
+        // THEN
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals(roboticArmEndpoints.get(0), response.getBody());
     }
 }

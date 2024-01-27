@@ -2,7 +2,10 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-@app.get('/liveness')
+@app.post('/liveness')
 def liveness_probe():
     app.logger.info(f'Received liveness probe, responding...')
-    return {'uuid': app.config.get('uuid')}
+    if app.config.get('uuid') != request.json['uuid']:
+        return "Bad Request (invalid uuid)", 400
+    else:
+        return {'uuid': app.config.get('uuid')}
