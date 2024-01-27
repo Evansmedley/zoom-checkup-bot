@@ -39,14 +39,12 @@ if __name__ == "__main__":
     move_bot.reset_motors()
     while True:
         motor_num, angle = recieve_request()
+        if motor_num is "exit":
+            break
         if motor_num is None and angle is None:
             pass
         else:
             move_bot.set_motor(angle, motor_num)
         motor_num, angle = None, None
-        
-    # th1 = threading.Thread(target=move_bot)
-    # th1.setDaemon(True)
-    # th1.start()
 
     del Arm

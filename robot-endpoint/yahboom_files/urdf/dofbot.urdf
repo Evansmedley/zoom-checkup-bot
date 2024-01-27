@@ -4,7 +4,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/base_link.STL" />
+                <mesh filename="package://arm_moveit/meshes/base_link.STL" />
             </geometry>
             <material name="">
                 <color rgba="0.592156862745098 0.666666666666667 0.682352941176471 1" />
@@ -13,7 +13,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/base_link.STL" />
+                <mesh filename="package://arm_moveit/meshes/base_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -21,7 +21,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link1.STL" />
+                <mesh filename="package://arm_moveit/meshes/link1.STL" />
             </geometry>
             <material name="">
                 <color rgba="0 0.627450980392157 0.235294117647059 1" />
@@ -30,7 +30,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link1.STL" />
+                <mesh filename="package://arm_moveit/meshes/link1.STL" />
             </geometry>
         </collision>
     </link>
@@ -45,7 +45,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link2.STL" />
+                <mesh filename="package://arm_moveit/meshes/link2.STL" />
             </geometry>
             <material name="">
                 <color rgba="0.592156862745098 0.666666666666667 0.682352941176471 1" />
@@ -54,7 +54,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link2.STL" />
+                <mesh filename="package://arm_moveit/meshes/link2.STL" />
             </geometry>
         </collision>
     </link>
@@ -69,7 +69,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link3.STL" />
+                <mesh filename="package://arm_moveit/meshes/link3.STL" />
             </geometry>
             <material name="">
                 <color rgba="0 0.627450980392157 0.235294117647059 1" />
@@ -78,7 +78,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link3.STL" />
+                <mesh filename="package://arm_moveit/meshes/link3.STL" />
             </geometry>
         </collision>
     </link>
@@ -93,7 +93,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link4.STL" />
+                <mesh filename="package://arm_moveit/meshes/link4.STL" />
             </geometry>
             <material name="">
                 <color rgba="0.592156862745098 0.666666666666667 0.682352941176471 1" />
@@ -102,7 +102,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link4.STL" />
+                <mesh filename="package://arm_moveit/meshes/link4.STL" />
             </geometry>
         </collision>
     </link>
@@ -118,7 +118,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link5.STL"/>
+                <mesh filename="package://arm_moveit/meshes/link5.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1" />
@@ -127,7 +127,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://dofbot_info/meshes/link5.STL" />
+                <mesh filename="package://arm_moveit/meshes/link5.STL" />
             </geometry>
         </collision>
     </link>
