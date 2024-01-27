@@ -1,7 +1,7 @@
 package com.checkupbot.checkupbotbackend.controllers;
 
-import com.checkupbot.checkupbotbackend.Requests.ChangeArmRequest;
-import com.checkupbot.checkupbotbackend.Requests.ChangeSliderRequest;
+import com.checkupbot.checkupbotbackend.requests.ChangeArmRequest;
+import com.checkupbot.checkupbotbackend.requests.ChangeSliderRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ArmMovementController {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(ArmMovementController.class);
 
     @GetMapping
     public String root() {
