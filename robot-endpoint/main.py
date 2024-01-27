@@ -32,8 +32,5 @@ if __name__ == '__main__':
     app.config['name'], app.config['uuid'], app.config['debug'] = \
                     args.name, uuid, args.debug
     
-    if args.debug:
-        print(f'Starting Flask app listening on {"127.0.0.1"}:{args.listen_port}...')
-        app.run(host='127.0.0.1', port=args.listen_port)
-    else:
-        app.run(host='127.0.0.1', port=args.listen_port)
+    print(f'Starting Flask app listening on {"127.0.0.1"}:{args.listen_port}...')
+    app.run(host='127.0.0.1', port=args.listen_port)
