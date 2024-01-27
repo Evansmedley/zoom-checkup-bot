@@ -6,6 +6,6 @@ app = Flask(__name__)
 def liveness_probe():
     app.logger.info(f'Received liveness probe, responding...')
     if app.config.get('uuid') != request.json['uuid']:
-        return "Bad Request (invalid uuid)", 400
+        return {"message": "Bad Request, invalid uuid"}, 400
     else:
         return {'uuid': app.config.get('uuid')}
