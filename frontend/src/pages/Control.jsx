@@ -10,7 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Control = () => {
   const download = () => {
@@ -26,6 +26,10 @@ const Control = () => {
   const [arm, setArm] = useState("one");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
+  const [slider, setSlider] = useState(30);
+
+  const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
+  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState(null);
 
   const marks = [
     {
@@ -37,6 +41,12 @@ const Control = () => {
       label: rightLabel,
     },
   ];
+
+  useEffect(() => {
+    fetch("/endpoint")
+      .then((response) => response.json())
+      .then((data) => setAllRobotEndpoints(data));
+  }, []);
 
   const handleLabel = (newArm) => {
     if (newArm === "one") {
@@ -72,8 +82,6 @@ const Control = () => {
     }
   };
 
-  const [slider, setSlider] = useState(30);
-
   const handleChangeSlider = (event, newValue) => {
     fetch("/changeSlider", {
       method: "POST",
@@ -89,19 +97,23 @@ const Control = () => {
     setSlider(newValue);
   };
 
-  const [robotEndpoint, setRobotEndpoint] = React.useState("");
-
-  const handleChange = (event) => {
-    setRobotEndpoint(event.target.value);
+  const handleRobotEndpoint = (event) => {
+    setSelectRobotEndpoint(event.target.value);
   };
 
-  const allRobotEndpoints = ["Active", "Inactive", "ActiveTest"];
-
   const getStatusColour = (status) => {
-    if (status === "Active") {
+    if (status) {
       return "success";
     } else {
       return "error";
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    if (status) {
+      return "Active";
+    } else {
+      return "Inactive";
     }
   };
 
@@ -118,24 +130,24 @@ const Control = () => {
           </InputLabel>
           <Select
             className="endpoint-option"
-            value={robotEndpoint}
+            value={selectRobotEndpoint}
             label="Endpoint"
-            onChange={handleChange}
+            onChange={handleRobotEndpoint}
             color="success"
           >
             {allRobotEndpoints.map((robotEndpointOption) => (
               <MenuItem
                 className="endpoint-option"
-                key={robotEndpointOption}
-                value={robotEndpointOption}
+                key={robotEndpointOption.uuid}
+                value={robotEndpointOption.uuid}
               >
                 <Chip
                   small="small"
-                  label={robotEndpointOption}
-                  color={getStatusColour(robotEndpointOption)}
+                  label={getStatusLabel(robotEndpointOption.active)}
+                  color={getStatusColour(robotEndpointOption.active)}
                   size="small"
                 />
-                <ListItemText primary={robotEndpointOption} />
+                <ListItemText primary={robotEndpointOption.name} />
               </MenuItem>
             ))}
           </Select>
