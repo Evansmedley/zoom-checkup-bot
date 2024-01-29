@@ -1,7 +1,8 @@
 import cv2
 from threading import Condition
-from http import server
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import socketserver
+import threading
 
 HTML_PAGE = """
 <html>
@@ -26,7 +27,7 @@ class StreamingOutput:
             self.condition.notify_all()
 
 
-class StreamingHandler(server.BaseHTTPRequestHandler):
+class StreamingHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
@@ -73,7 +74,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         self.wfile.write(b'\r\n')
 
 
-class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
+class StreamingServer(socketserver.ThreadingMixIn, HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
@@ -107,8 +108,8 @@ def opencv_camera_stream():
 if __name__ == "__main__":
     output = StreamingOutput()
 
-    server_process = server.ThreadingHTTPServer(('0.0.0.0', 8000), StreamingHandler)
-    server_thread = server.Thread(target=server_process.serve_forever)
+    server_process = StreamingServer(('0.0.0.0', 8000), StreamingHandler)
+    server_thread = threading.Thread(target=server_process.serve_forever)
     server_thread.daemon = True
     server_thread.start()
 
