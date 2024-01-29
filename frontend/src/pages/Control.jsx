@@ -1,8 +1,16 @@
 import Slider from "@mui/material/Slider";
 import * as React from "react";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useState } from "react";
+import Button from "@mui/joy/Button";
+import ToggleButtonGroup from "@mui/joy/ToggleButtonGroup";
+import { ListItemText, TextField } from "@mui/material";
+import Input from "@mui/material/Input";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+
+import { useState, useEffect } from "react";
 
 const Control = () => {
   const download = () => {
@@ -18,6 +26,10 @@ const Control = () => {
   const [arm, setArm] = useState("one");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
+  const [slider, setSlider] = useState(30);
+
+  const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
+  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState(null);
 
   const marks = [
     {
@@ -29,6 +41,12 @@ const Control = () => {
       label: rightLabel,
     },
   ];
+
+  useEffect(() => {
+    fetch("/endpoint")
+      .then((response) => response.json())
+      .then((data) => setAllRobotEndpoints(data));
+  }, []);
 
   const handleLabel = (newArm) => {
     if (newArm === "one") {
@@ -48,7 +66,7 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm !== null) {
-      let data = {arm: newArm}
+      let data = { arm: newArm };
       fetch("/changeArm", {
         method: "POST",
         body: JSON.stringify(data),
@@ -63,8 +81,6 @@ const Control = () => {
       handleLabel(newArm);
     }
   };
-
-  const [slider, setSlider] = useState(30);
 
   const handleChangeSlider = (event, newValue) => {
     fetch("/changeSlider", {
@@ -81,62 +97,118 @@ const Control = () => {
     setSlider(newValue);
   };
 
-  return (
-    <div className="main-control">
-      <div className="column left">
-        <p>*Add livestream here*</p>
+  const handleRobotEndpoint = (event) => {
+    setSelectRobotEndpoint(event.target.value);
+  };
 
+  const getStatusColour = (status) => {
+    if (status) {
+      return "success";
+    } else {
+      return "error";
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    if (status) {
+      return "Active";
+    } else {
+      return "Inactive";
+    }
+  };
+
+  return (
+    <div className="main">
+      <div className="column">
+        <p>*Add livestream here*</p>
         <p>Current arm: {arm}</p>
         <p>Current state: {slider}</p>
+
+        <FormControl size="small" className="drop-down">
+          <InputLabel id="demo-simple-select-helper-label" color="success">
+            Endpoint
+          </InputLabel>
+          <Select
+            className="endpoint-option"
+            value={selectRobotEndpoint}
+            label="Endpoint"
+            onChange={handleRobotEndpoint}
+            color="success"
+          >
+            {allRobotEndpoints.map((robotEndpointOption) => (
+              <MenuItem
+                className="endpoint-option"
+                key={robotEndpointOption.uuid}
+                value={robotEndpointOption.uuid}
+              >
+                <Chip
+                  small="small"
+                  label={getStatusLabel(robotEndpointOption.active)}
+                  color={getStatusColour(robotEndpointOption.active)}
+                  size="small"
+                />
+                <ListItemText primary={robotEndpointOption.name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
 
-      <div className="column">
-        <div className="notes">
-          Notes <br />
-          <textarea
-            id="notes"
-            rows="15"
-            cols="70"
-            placeholder="Write notes here..."
-            download="final_notes"
-          ></textarea>
-          <br />
-          <br />
-          <button className="saveBtn" onClick={download}>
-            {" "}
-            Download
-          </button>
-          <input
+      <div className="column right">
+        <TextField
+          id="notes"
+          label="Notes"
+          multiline
+          rows={12}
+          fullWidth
+          download="final_notes"
+          variant="outlined"
+          color="success"
+        />
+        <div className="save">
+          <Input
+            required
             id="filename"
             className="filename"
-            placeholder="Specify a filename…"
+            placeholder="Name"
+            color="success"
           />
-        </div>
-        <div>
-          <ToggleButtonGroup
-            color="primary"
-            value={arm}
-            exclusive
-            onChange={handleChangeArm}
-            aria-label="Platform"
+
+          <Button
+            className="saveBtn"
+            onClick={download}
+            variant="soft"
+            size="md"
+            color="success"
           >
-            <ToggleButton value="one">1</ToggleButton>,
-            <ToggleButton value="two">2</ToggleButton>,
-            <ToggleButton value="three">3</ToggleButton>,
-            <ToggleButton value="four">4</ToggleButton>,
-            <ToggleButton value="five">5</ToggleButton>,
-            <ToggleButton value="six">6</ToggleButton>
+            Download
+          </Button>
+        </div>
+
+        <div className="arm-controls">
+          <ToggleButtonGroup
+            className="buttonGroup"
+            value={arm}
+            onChange={handleChangeArm}
+            size="md"
+            spacing={1}
+          >
+            <Button value="one">1</Button>
+            <Button value="two">2</Button>
+            <Button value="three">3</Button>
+            <Button value="four">4</Button>
+            <Button value="five">5</Button>
+            <Button value="six">6</Button>
           </ToggleButtonGroup>
 
-          <div>
-            <Slider
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              value={slider}
-              onChange={handleChangeSlider}
-              marks={marks}
-            />
-          </div>
+          <Slider
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            value={slider}
+            onChange={handleChangeSlider}
+            marks={marks}
+            color="success"
+          />
         </div>
       </div>
     </div>
