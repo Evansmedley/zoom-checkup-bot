@@ -69,7 +69,7 @@ public class RoboticArmEndpoint {
     }
 
     public String getUri() {
-        return "http://" + this.ip + ":" + this.port + "/" + uuid;
+        return "http://" + this.ip + ":" + this.port;
     }
 
     @Override
