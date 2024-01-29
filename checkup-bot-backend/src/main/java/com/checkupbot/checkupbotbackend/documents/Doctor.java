@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("testDoctorDB")
+@Document("DoctorDB")
 public class Doctor implements UserDetails {
     @Id
     private String id;
