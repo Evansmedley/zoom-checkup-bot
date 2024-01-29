@@ -1,43 +1,38 @@
+import Button from "@mui/joy/Button";
+import { FormControl } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import InputLabel from "@mui/material/InputLabel";
+import Input from "@mui/material/Input";
+import OutlinedInput from "@mui/material/OutlinedInput";
 
 const Login = () => {
+  return (
+    <div>
+      <div className="main-rec">
+        <div id="title">Doctor Sign In Portal</div>
 
-    return(
-        <div>
-            <div className="main-rec">
-            {/* <img src={mainRectange} alt="main-rectangle" /> */}
+        <div id="form">
+          <FormControl fullWidth>
+            <InputLabel htmlFor="username">Username/CPSO ID</InputLabel>
+            <OutlinedInput id="username" label="Username/CPSO ID" />
+          </FormControl>
 
-                <div id="sign-in">
-                
-                    <div id="title">
-                        Doctor Sign In Portal
-                    </div>
-                    <form>
-                        <label>
-                            Username/CPSO ID:
-                            <input type="text" name="username" />
-                        </label>
-                        <label>
-                            Password:
-                            <input type="text" name="password" />
-                        </label>
-                        <input type="submit" value="Submit"/>
-                    </form>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <OutlinedInput id="password" label="Password" />
+          </FormControl>
 
-                </div>
-            </div>
-
-            <div className="small-ellipse">
-            </div>
-
-            <div className="small-rec">
-            </div>
-
-            {/* <img src={smallEllipse} className="small-ellipse" alt="small-ellipse" /> */}
-            {/* <img src={smallRectange} className="small-rec" alt="small-rectangle" /> */}
+          <Button size="md" color="primary" className="submit-login">
+            Submit
+          </Button>
         </div>
+      </div>
 
+      <div className="small-ellipse"></div>
 
-    )
+      <div className="small-rec"></div>
+    </div>
+  );
 };
 
 export default Login;

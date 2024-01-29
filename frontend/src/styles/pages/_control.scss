@@ -1,124 +1,55 @@
 * {
     box-sizing: border-box;
-}
-
-
-.selected {
-    outline: 4px solid grey;
-}
-
-.all-arrows{
+  }
+  
+  .main {
     display: flex;
-    flex-direction: row;
-    gap: 20rem;
-    padding-top: 2rem;
-    justify-content: center;
-}
-
-.xy{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.depth{
+    padding-right: 2rem;
+    padding-left: 2rem;
+    gap: 10px;
+  }
+  
+  .column {
     display: flex;
     flex-direction: column;
-    gap: 5rem;
+    flex: 50%;
+  }
+
+  .drop-down{
+    width: 80%;
+  }
+
+.arm-controls {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
 }
 
-.arrow{
-    width: 5rem;
-    height: 5rem;
-
-    .spacer{
-        grid-area: auto;
-    }
-
-    .down, .out{
-        transform: rotate(180deg);
-    }
-
-    .right{
-        transform: rotate(90deg);
-    }
-
-    .left{
-        transform: rotate(270deg)
-    }
+.buttonGroup {
+    position: relative;
+    padding-bottom: 2rem;
+    padding-left: 30%;
 }
 
-.column {
-    float: left;
-    width: 50%;
-    padding: 10px;
-    resize: horizontal;
+
+.save{
+    display: inherit;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: flex-end;
+    padding-bottom: 2rem;
 }
 
-/* Clear floats after the columns */
-.main-control:after {
-    content: "";
-    display: table;
-    clear: both;
+.right{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .column {
-        width: 100%;
-    }
-}
-
-.notes {
-    background: #f0ffef;
-    padding: 10px;
-    border-radius: 14px;
-    width: 100%;
-    resize: vertical;
-    white-space: pre-wrap
-}
-
-.filename {
-    border: 1px solid #0b293d;
-    height: 30px;
-    line-height: 50px;
-    border-radius: 7px;
-    float: right;
-}
-
-.saveBtn {
-    background-color: #328de2;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 7px;
-    margin-top: 3px;
-    float: right;
-    cursor: pointer
-}
-
-.saveBtn:hover {
-    background-color: #357fc3;
-}* {
-    box-sizing: border-box;
-}
-
-.column {
-    float: left;
-    width: 50%;
-    padding: 10px;
-    resize: horizontal
-}
-
-/* Clear floats after the columns */
-.main-control:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .column {
-        width: 100%;
-    }
+.endpoint-option > div, 
+.css-6hp17o-MuiList-root-MuiMenu-list li{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
 }
