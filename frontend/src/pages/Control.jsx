@@ -56,12 +56,10 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm !== null) {
+      let data = {arm: newArm}
       fetch("/changeArm", {
         method: "POST",
-        body: JSON.stringify({
-          arm: newArm,
-        }),
-        mode: "no-cors",
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
@@ -82,7 +80,6 @@ const Control = () => {
       body: JSON.stringify({
         move: newValue,
       }),
-      mode: "no-cors",
       headers: {
         "Content-Type": "application/json",
       },
