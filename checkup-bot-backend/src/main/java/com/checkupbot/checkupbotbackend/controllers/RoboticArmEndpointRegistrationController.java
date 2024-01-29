@@ -19,6 +19,7 @@ public class RoboticArmEndpointRegistrationController {
 
     private static final Logger logger = LoggerFactory.getLogger(RoboticArmEndpointRegistrationController.class);
 
+  
     @GetMapping(value = "")
     public List<RoboticArmEndpoint> getEndpoints() {
         logger.debug("Received request: GET ENDPOINTS");
@@ -32,18 +33,26 @@ public class RoboticArmEndpointRegistrationController {
     }
 
     @PostMapping(value = "/register")
+    public RoboticArmEndpoint registerRoboticArmEndpoint(@RequestBody RoboticArmEndpoint newEndpoint) {
+        logger.info("Received Request: REGISTER ROBOTIC ARM ENDPOINT");
+        logger.info(newEndpoint.toString());
+
+        for (RoboticArmEndpoint existingEndpoint : roboticArmEndpointRepository.findAll()) {
+            if (existingEndpoint.getUri().equals(newEndpoint.getUri())) {
+                return existingEndpoint;
+            }
+        }
+
+        roboticArmEndpointRepository.save(newEndpoint);
+
+        return newEndpoint;
+    }
+
+    @DeleteMapping(value = "/{uuid}")
     public RoboticArmEndpoint registerRoboticArmEndpoint(@RequestBody RoboticArmEndpoint roboticArmEndpoint) {
         logger.debug("Received Request: REGISTER ROBOTIC ARM ENDPOINT");
         roboticArmEndpoint.setActive(true);
         roboticArmEndpointRepository.save(roboticArmEndpoint);
         return roboticArmEndpoint;
-    }
-
-    @DeleteMapping(value = "/{uuid}/delete")
-    public RoboticArmEndpoint deleteRoboticArmEndpoint(@PathVariable("uuid") String uuid) {
-        logger.debug("Received request: DELETE ROBOTIC ARM ENDPOINT");
-        Optional<RoboticArmEndpoint> roboticArmEndpoint = roboticArmEndpointRepository.findById(uuid);
-        roboticArmEndpointRepository.deleteById(uuid);
-        return roboticArmEndpoint.orElse(null);
     }
 }
