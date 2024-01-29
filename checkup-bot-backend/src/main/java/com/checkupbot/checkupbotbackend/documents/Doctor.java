@@ -26,12 +26,9 @@ public class Doctor implements UserDetails {
     private String cpsoNumber;
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(Role.USER.name()));
     }
 
     @Override
