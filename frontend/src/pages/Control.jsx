@@ -56,7 +56,7 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm !== null) {
-      let data = {arm: newArm}
+      let data = { arm: newArm };
       fetch("/changeArm", {
         method: "POST",
         body: JSON.stringify(data),
@@ -95,7 +95,15 @@ const Control = () => {
     setRobotEndpoint(event.target.value);
   };
 
-  const allRobotEndpoints = ["endpoint1", "endpoint2", "endpoint3"];
+  const allRobotEndpoints = ["Active", "Inactive", "ActiveTest"];
+
+  const getStatusColour = (status) => {
+    if (status === "Active") {
+      return "success";
+    } else {
+      return "error";
+    }
+  };
 
   return (
     <div className="main">
@@ -104,7 +112,7 @@ const Control = () => {
         <p>Current arm: {arm}</p>
         <p>Current state: {slider}</p>
 
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl size="small" className="drop-down">
           <InputLabel id="demo-simple-select-helper-label" color="success">
             Endpoint
           </InputLabel>
@@ -118,10 +126,15 @@ const Control = () => {
             {allRobotEndpoints.map((robotEndpointOption) => (
               <MenuItem
                 className="endpoint-option"
-                key="robotEndpoint"
+                key={robotEndpointOption}
                 value={robotEndpointOption}
               >
-                <Chip label="Active" color="success" size="small" />
+                <Chip
+                  small="small"
+                  label={robotEndpointOption}
+                  color={getStatusColour(robotEndpointOption)}
+                  size="small"
+                />
                 <ListItemText primary={robotEndpointOption} />
               </MenuItem>
             ))}
