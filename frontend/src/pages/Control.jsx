@@ -42,11 +42,11 @@ const Control = () => {
     },
   ];
 
-  useEffect(() => {
+  const getEndpoints = () => {
     fetch("/endpoint")
       .then((response) => response.json())
       .then((data) => setAllRobotEndpoints(data));
-  }, []);
+  };
 
   const handleLabel = (newArm) => {
     if (newArm === "one") {
@@ -133,6 +133,7 @@ const Control = () => {
             value={selectRobotEndpoint}
             label="Endpoint"
             onChange={handleRobotEndpoint}
+            onOpen={getEndpoints}
             color="success"
           >
             {allRobotEndpoints.map((robotEndpointOption) => (
