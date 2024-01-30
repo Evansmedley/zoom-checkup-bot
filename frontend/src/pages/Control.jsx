@@ -65,21 +65,20 @@ const Control = () => {
   };
 
   const handleChangeArm = (event, newArm) => {
-    if (newArm !== null) {
-      let data = { arm: newArm };
-      fetch(`/changeSlider/${selectRobotEndpoint}`, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      console.log("setting arm: " + newArm);
-      handleLabel(newArm);
-    }
+    fetch(`/changeArm/${selectRobotEndpoint}`, {
+      method: "POST",
+      body: JSON.stringify({
+        arm: newArm,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+    setArm(newArm);
+    console.log("setting arm: " + newArm);
+    handleLabel(newArm);
   };
 
   const handleChangeSlider = (event, newValue) => {
