@@ -42,11 +42,11 @@ const Control = () => {
     },
   ];
 
-  useEffect(() => {
+  const getEndpoints = () => {
     fetch("/endpoint")
       .then((response) => response.json())
       .then((data) => setAllRobotEndpoints(data));
-  }, []);
+  };
 
   const handleLabel = (newArm) => {
     if (newArm === "one") {
@@ -65,25 +65,24 @@ const Control = () => {
   };
 
   const handleChangeArm = (event, newArm) => {
-    if (newArm !== null) {
-      let data = { arm: newArm };
-      fetch("/changeArm", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      console.log("setting arm: " + newArm);
-      handleLabel(newArm);
-    }
+    fetch(`/changeArm/${selectRobotEndpoint}`, {
+      method: "POST",
+      body: JSON.stringify({
+        arm: newArm,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+    setArm(newArm);
+    console.log("setting arm: " + newArm);
+    handleLabel(newArm);
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch("/changeSlider", {
+    fetch(`/changeSlider/${selectRobotEndpoint}`, {
       method: "POST",
       body: JSON.stringify({
         move: newValue,
@@ -133,6 +132,7 @@ const Control = () => {
             value={selectRobotEndpoint}
             label="Endpoint"
             onChange={handleRobotEndpoint}
+            onOpen={getEndpoints}
             color="success"
           >
             {allRobotEndpoints.map((robotEndpointOption) => (
