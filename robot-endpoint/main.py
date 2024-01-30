@@ -27,10 +27,14 @@ if __name__ == '__main__':
     args = get_args()
     
     # Send a POST request to the server to register
-    uuid = HTTPClient(args.name).register(args.server, args.listen_port, args.local)
+    http_client = HTTPClient(args.name)
+    uuid = http_client.register(args.server, args.listen_port, args.local)
     
     app.config['name'], app.config['uuid'], app.config['debug'] = \
                     args.name, uuid, args.debug
     
-    print(f'Starting Flask app listening on {"127.0.0.1"}:{args.listen_port}...')
-    app.run(host='127.0.0.1', port=args.listen_port)
+    server_ip = '127.0.0.1' if args.local else http_client.get_external_client_ip()
+    
+    print(f'Starting Flask app listening on {server_ip}:{args.listen_port}...')
+
+    app.run(host=server_ip, port=args.listen_port)
