@@ -11,6 +11,8 @@
 
 
 ## Running script
+To prevent conflicts with native Yahboom App run every time on the Raspberry Pi
+sh ~/Dofbot/kill_YahboomArm.sh
 
 To run the script locally without a robotic arm present use:
 python3 main.py -n {NAME} -s 127.0.0.1 -p {LISTEN_PORT} -d -l
