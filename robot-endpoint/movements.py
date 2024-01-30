@@ -3,7 +3,7 @@ import threading
 from Arm_Lib import Arm_Device
 from dataclasses import dataclass
 
-MOVEMENT_TIME = 2000
+MOVEMENT_TIME = 1000
 # Tested constraints manually
 
 #limits = {
@@ -47,7 +47,7 @@ class Move_Motors:
         """
         time.sleep(1)
 
-        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 165, 500)
+        self.Arm.Arm_serial_servo_write6(80, 90, 90, 0, 90, 165, 500)
         time.sleep(1)
 
     def boundaries(self, next_angle: int, motor: Motors) -> int:
@@ -93,7 +93,7 @@ class Move_Motors:
         delta_t = self.time_duration(angle, new_angle)
         self.Arm.Arm_serial_servo_write(motor.motor_id, new_angle, motor.time_run)
         time.sleep(delta_t+0.01)
-        #self.update_real_position()
+        self.update_real_position()
     
     def time_duration(self, current_angle:int, final_angle:int) -> float:
         """Time to move the robot
@@ -119,8 +119,8 @@ def set_all_angles():
 
     return motor1, motor2, motor3, motor4, motor5, motor6
     
-motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
-move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
-move_bot.reset_motors()
-move_bot.set_motor(10, 3)
+#motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
+#move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
+#move_bot.reset_motors()
+#move_bot.set_motor(10, 3)
     
