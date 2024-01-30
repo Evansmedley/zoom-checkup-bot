@@ -6,11 +6,11 @@ from dataclasses import dataclass
 MOVEMENT_TIME = 1000
 # Tested constraints manually
 
-limits = {
-    [90, 180, 90, 90, 90, 90], # flat back DO NOT MOVE 3, 4 below 90
-    [90, 0, 90, 60, 90, 90],  # lowest forward with motor 2 at 0
-    [90, 50, 0, 60, 90, 90],  # lowest forward with motor 3 at 0
-}
+#limits = {
+#    [90, 180, 90, 90, 90, 90], # flat back DO NOT MOVE 3, 4 below 90
+#    [90, 0, 90, 60, 90, 90],  # lowest forward with motor 2 at 0
+#    [90, 50, 0, 60, 90, 90],  # lowest forward with motor 3 at 0
+#}
 
 @dataclass
 class Motors:
@@ -46,16 +46,8 @@ class Move_Motors:
         Resets all motor angles after a delay of 3 seconds
         """
         time.sleep(1)
-        # buzzer_time = 1 # Alert with buzzer
-        # self.Arm.Arm_Buzzer_On(buzzer_time)
-        # time.sleep(1)
 
-        # # Closed buzzer
-        # self.Arm.Arm_Buzzer_Off()
-        # time.sleep(1)
-
-        # Set to default position
-        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 165, 500)
+        self.Arm.Arm_serial_servo_write6(80, 90, 90, 0, 90, 165, 500)
         time.sleep(1)
 
     def boundaries(self, next_angle: int, motor: Motors) -> int:
@@ -118,11 +110,17 @@ class Move_Motors:
         return abs(final_angle - current_angle) * time_per_angle
 
 def set_all_angles():
-    motor1 = Move_Motors(1, 0, 180, 90, MOVEMENT_TIME)
-    motor2 = Move_Motors(2, 0, 130, 90, MOVEMENT_TIME)
-    motor3 = Move_Motors(3, 0, 180, 90, MOVEMENT_TIME)
-    motor4 = Move_Motors(4, -40, 180, 0, MOVEMENT_TIME)
-    motor5 = Move_Motors(5, 0, 180, 90, MOVEMENT_TIME)
-    motor6 = Move_Motors(6, 0, 165, 165, 500)
+    motor1 = Motors(1, 0, 180, 90, MOVEMENT_TIME)
+    motor2 = Motors(2, 0, 130, 90, MOVEMENT_TIME)
+    motor3 = Motors(3, 0, 180, 90, MOVEMENT_TIME)
+    motor4 = Motors(4, 0, 180, 0, MOVEMENT_TIME)
+    motor5 = Motors(5, 0, 180, 90, MOVEMENT_TIME)
+    motor6 = Motors(6, 0, 165, 165, 500)
 
     return motor1, motor2, motor3, motor4, motor5, motor6
+    
+#motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
+#move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
+#move_bot.reset_motors()
+#move_bot.set_motor(10, 3)
+    

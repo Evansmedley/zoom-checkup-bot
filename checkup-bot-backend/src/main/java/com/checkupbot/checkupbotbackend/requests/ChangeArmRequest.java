@@ -4,6 +4,7 @@ public class ChangeArmRequest {
 
     private Integer arm;
 
+  
     public ChangeArmRequest() {
     }
 
