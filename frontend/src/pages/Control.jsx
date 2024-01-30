@@ -67,7 +67,7 @@ const Control = () => {
   const handleChangeArm = (event, newArm) => {
     if (newArm !== null) {
       let data = { arm: newArm };
-      fetch("/changeArm", {
+      fetch(`/changeSlider/${selectRobotEndpoint}`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -83,7 +83,7 @@ const Control = () => {
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch("/changeSlider", {
+    fetch(`/changeSlider/${selectRobotEndpoint}`, {
       method: "POST",
       body: JSON.stringify({
         move: newValue,
