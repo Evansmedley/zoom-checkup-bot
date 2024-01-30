@@ -12,6 +12,8 @@ import Chip from "@mui/material/Chip";
 
 import { useState, useEffect } from "react";
 
+const STREAM_URL = "http://172.17.84.71:5000/stream.mjpg";
+
 const Control = () => {
   const download = () => {
     const noteContent = document.getElementById("notes").value;
@@ -121,7 +123,9 @@ const Control = () => {
     <div className="main">
       <div className="column">
         <p>*Add livestream here*</p>
-        <img id="camera-stream" src="http://10.0.0.46:8000/stream.mjpg" width="640" height="480" />
+        {STREAM_URL && (
+          <img id="camera-stream" src={STREAM_URL} width="640" height="480" />
+        )}
         <p>Current arm: {arm}</p>
         <p>Current state: {slider}</p>
 

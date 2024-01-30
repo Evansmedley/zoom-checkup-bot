@@ -26,6 +26,7 @@ class StreamingOutput:
             self.frame = frame
             self.condition.notify_all()
 
+output = StreamingOutput()
 
 class StreamingHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -73,11 +74,9 @@ class StreamingHandler(BaseHTTPRequestHandler):
         self.wfile.write(jpeg.tobytes())
         self.wfile.write(b'\r\n')
 
-
 class StreamingServer(socketserver.ThreadingMixIn, HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
-
 
 def opencv_camera_stream():
     cap = cv2.VideoCapture(0)
@@ -86,31 +85,38 @@ def opencv_camera_stream():
         print("Error: Could not open camera.")
         exit()
 
-    while True:
-        ret, frame = cap.read()
+    try:
+        while True:
+            ret, frame = cap.read()
 
-        if not ret:
-            print("Error: Failed to capture frame.")
-            break
+            if not ret:
+                print("Error: Failed to capture frame.")
+                break
 
-        with output.condition:
-            output.condition.notify_all()
+            with output.condition:
+                output.condition.notify_all()
 
-        cv2.imshow('Camera Stream', frame)
+            cv2.imshow('Camera Stream', frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-    cap.release()
-    cv2.destroyAllWindows()
-
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    output = StreamingOutput()
+    try:
+        server_process = StreamingServer(('0.0.0.0', 5000), StreamingHandler)
+        server_thread = threading.Thread(target=server_process.serve_forever)
+        server_thread.daemon = True
+        server_thread.start()
 
-    server_process = StreamingServer(('0.0.0.0', 8000), StreamingHandler)
-    server_thread = threading.Thread(target=server_process.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
+        opencv_camera_stream()
 
-    opencv_camera_stream()
+    except KeyboardInterrupt:
+        print("Interrupted. Stopping server and releasing resources.")
+        server_process.shutdown()
+        server_process.server_close()
+        cv2.destroyAllWindows()
+        exit()
