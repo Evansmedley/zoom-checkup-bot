@@ -3,6 +3,7 @@ import { FormControl } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import axios from "axios";
+import {request, setAuthHeader} from "../axios_helper";
 import { useState } from "react";
 
 const Login = () => {
@@ -12,18 +13,20 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault(); // avoid page refresh
 
-    axios
-      .post("http://localhost:8080/api/auth/authenticate", {
-        cpsoNumber: username,
-        password: password,
-      })
-      .then((response) => {
-        console.log(response);
-        alert("submitted");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    request("POST", "/api/auth/authenticate", {
+      cpsoNumber: username,
+      password: password,
+    }).then(
+        (response) => {
+          setAuthHeader(response.data.jwt);
+          console.log(response);
+          alert("submitted");
+        }).catch(
+        (error) => {
+          setAuthHeader(null)
+          console.log(error);
+        }
+    );
   };
 
   return (

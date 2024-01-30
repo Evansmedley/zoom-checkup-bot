@@ -10,7 +10,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
+import {getAuthToken} from "../axios_helper";
 
 const Control = () => {
   const download = () => {
@@ -43,7 +44,9 @@ const Control = () => {
   ];
 
   useEffect(() => {
-    fetch("/endpoint")
+    fetch("/endpoint", {
+      headers: {'Authorization': `Bearer ${getAuthToken()}`}
+    })
       .then((response) => response.json())
       .then((data) => setAllRobotEndpoints(data));
   }, []);
