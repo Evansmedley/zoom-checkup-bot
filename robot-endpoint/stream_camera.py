@@ -3,6 +3,7 @@ from threading import Condition
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import socketserver
 import threading
+import logging
 
 HTML_PAGE = """
 <html>
@@ -60,7 +61,13 @@ class StreamingHandler(BaseHTTPRequestHandler):
                     output.condition.wait()
                     frame = output.frame
 
-                self.send_frame(frame)
+                _, jpeg = cv2.imencode('.jpg', frame)
+                self.wfile.write(b'--FRAME\r\n')
+                self.send_header('Content-Type', 'image/jpeg')
+                self.send_header('Content-Length', len(jpeg))
+                self.end_headers()
+                self.wfile.write(jpeg.tobytes())
+                self.wfile.write(b'\r\n')
 
         except Exception as e:
             logging.warning(f'Removed streaming client {self.client_address}: {str(e)}')

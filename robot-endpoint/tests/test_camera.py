@@ -1,10 +1,4 @@
 import cv2
-import ipywidgets.widgets as widgets
-import threading
-import time
-
-import enum
-import cv2
     
 image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
 
