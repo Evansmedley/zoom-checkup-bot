@@ -1,7 +1,7 @@
 import time
 import threading
 from Arm_Lib import Arm_Device
-from PID_controller import Positional_PID
+#from PID_controller import Positional_PID
 from dataclasses import dataclass
 
 MOVEMENT_TIME = 1000
@@ -41,7 +41,7 @@ class Move_Motors:
         }
 
         self.reset_motors()
-        self.pid = Positional_PID()
+        #self.pid = Positional_PID()
     
     def reset_motors(self) -> None:
         """ 
