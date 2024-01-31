@@ -90,7 +90,7 @@ class Move_Motors:
             motor_int (int): motor number to set
             angle (int): angle to set
         """
-        self.pid.PositionalPID(0.5, 0.2, 0.31)
+        #self.pid.PositionalPID(0.5, 0.2, 0.31)
         
         motor = self.motor_dict[motor_num]
         new_angle = self.boundaries(angle, motor)
