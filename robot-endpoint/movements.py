@@ -98,11 +98,11 @@ class Move_Motors:
         self.Arm.Arm_serial_servo_write(motor.motor_id, new_angle, motor.time_run)
         time.sleep(delta_t+0.01)
 
-        self.pid.SystemOutput = angle
-        self.pid.SetStepSignal(320)
-        self.pid.SetInertiaTime(0.01, 0.1)
+        #self.pid.SystemOutput = angle
+        #self.pid.SetStepSignal(320)
+        #self.pid.SetInertiaTime(0.01, 0.1)
         
-        self.update_real_position()
+        #self.update_real_position()
     
     def time_duration(self, current_angle:int, final_angle:int) -> float:
         """Time to move the robot
