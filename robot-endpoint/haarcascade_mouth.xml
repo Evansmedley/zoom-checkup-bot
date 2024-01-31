@@ -84,7 +84,7 @@ mcastrillon@iusiani.ulpgc.es
 <opencv_storage>
 <Boca_17stages type_id="opencv-haar-classifier">
   <size>
-    25 15</size>
+    25 26</size>
   <stages>
     <_>
       <!-- stage 0 -->
