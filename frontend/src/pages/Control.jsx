@@ -133,10 +133,9 @@ const Control = () => {
       <Header login={true} />
       <div className="main">
         <div className="column">
-          <p>*Add livestream here*</p>
-          {/* {STREAM_URL && (
-            <img id="camera-stream" src={STREAM_URL} width="640" height="480" />
-          )} */}
+          {STREAM_URL && (
+            <img id="camera-stream" src={STREAM_URL} width="640" height="300" />
+          )}
           <p>Current arm: {arm}</p>
           <p>Current state: {slider}</p>
 
