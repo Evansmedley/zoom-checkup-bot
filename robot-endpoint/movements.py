@@ -1,17 +1,10 @@
 import time
 import threading
 from Arm_Lib import Arm_Device
-import PID_controller
+# import PID_controller
 from dataclasses import dataclass
 
 MOVEMENT_TIME = 1000
-# Tested constraints manually
-
-#limits = {
-#    [90, 180, 90, 90, 90, 90], # flat back DO NOT MOVE 3, 4 below 90
-#    [90, 0, 90, 60, 90, 90],  # lowest forward with motor 2 at 0
-#    [90, 50, 0, 60, 90, 90],  # lowest forward with motor 3 at 0
-#}
 
 @dataclass
 class Motors:
@@ -41,7 +34,7 @@ class Move_Motors:
         }
 
         self.reset_motors()
-        self.pid = PID_controller()
+#         self.pid = PID_controller()
     
     def reset_motors(self) -> None:
         """ 
@@ -90,7 +83,7 @@ class Move_Motors:
             motor_int (int): motor number to set
             angle (int): angle to set
         """
-        self.pid.PositionalPID(0.5, 0.2, 0.31)
+#         self.pid.PositionalPID(0.5, 0.2, 0.31)
         
         motor = self.motor_dict[motor_num]
         new_angle = self.boundaries(angle, motor)
@@ -98,9 +91,9 @@ class Move_Motors:
         self.Arm.Arm_serial_servo_write(motor.motor_id, new_angle, motor.time_run)
         time.sleep(delta_t+0.01)
 
-        self.pid.SystemOutput = angle
-        self.pid.SetStepSignal(320)
-        self.pid.SetInertiaTime(0.01, 0.1)
+#         self.pid.SystemOutput = angle
+#         self.pid.SetStepSignal(320)
+#         self.pid.SetInertiaTime(0.01, 0.1)
         
         self.update_real_position()
     

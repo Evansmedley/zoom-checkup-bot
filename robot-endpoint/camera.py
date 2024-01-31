@@ -18,10 +18,7 @@ def face_filter(faces):
     if w < 10 or h < 10: return None
     return max_face
 
-def follow_function(img):
-    distanceDetect = distance_detector.DistanceDetector("Ref_image.jpg", 65, 17, faceDetect)
-    focal_length = distanceDetect.get_focal_length()
-
+def follow_function(img, focal_length):
     img = cv2.resize(img, (640, 480))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = img.copy()
@@ -42,18 +39,21 @@ def follow_function(img):
 
 faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-#image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
+image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
 
 # For Jeremy's Testing
-image = cv2.VideoCapture(0)
+#image = cv2.VideoCapture(0)
 
 width=600
 height=500
 
 try:
+    distanceDetect = distance_detector.DistanceDetector("Ref_image.jpg", 65, 17, faceDetect)
+    focal_length = distanceDetect.get_focal_length()
+
     while True:
         ret, frame = image.read()
-        img = follow_function(frame)
+        img = follow_function(frame, focal_length)
         cv2.imshow("Camera Stream", img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break # wait until a key is pressed
