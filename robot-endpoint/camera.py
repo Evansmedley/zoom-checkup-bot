@@ -29,7 +29,7 @@ def follow_function(img):
     return img
     
 
-faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+# faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 faceDetect = cv2.CascadeClassifier("haarcascade_mouth.xml")
 image = cv2.VideoCapture(0) # , cv2.CAP_GSTREAMER
 
