@@ -1,13 +1,22 @@
 .App-group {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     position: relative;
     z-index: 999;
     height: 60px;
+    gap: 40px;
 }
 
 
 .App-link {
     color: black;
-    padding-left: 20px;
+}
+
+.right {
+    padding-right: 80px;
+}
+
+.left{
+    padding-left: 50px;
 }
