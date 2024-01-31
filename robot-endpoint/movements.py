@@ -1,6 +1,7 @@
 import time
 import threading
 from Arm_Lib import Arm_Device
+from fwd_kin import ForwardKinematics
 from dataclasses import dataclass
 
 MOVEMENT_TIME = 1000
@@ -72,6 +73,11 @@ class Move_Motors:
         self.motor4.curr_angle = self.Arm.Arm_serial_servo_read(self.motor4.motor_id)
         self.motor5.curr_angle = self.Arm.Arm_serial_servo_read(self.motor5.motor_id)
         self.motor6.curr_angle = self.Arm.Arm_serial_servo_read(self.motor6.motor_id)
+
+        list_angles = [self.motor1.curr_angle, self.motor2.curr_angle, self.motor3.curr_angle, self.motor4.curr_angle, self.motor5.curr_angle,  self.motor6.curr_angle]
+        list_angles = [90, 10, 0, 0, 0, 0]
+        fwd_k = ForwardKinematics(list_angles, [0, 0, 0, 0, 0, 0])
+
     
 
     def set_motor(self, angle: int, motor_num: int) -> None:
@@ -82,19 +88,12 @@ class Move_Motors:
             motor_int (int): motor number to set
             angle (int): angle to set
         """
-        # self.pid.PositionalPID(0.5, 0.2, 0.31)
         
         motor = self.motor_dict[motor_num]
         new_angle = self.boundaries(angle, motor)
         delta_t = self.time_duration(angle, new_angle)
         self.Arm.Arm_serial_servo_write(motor.motor_id, new_angle, motor.time_run)
         time.sleep(delta_t+0.01)
-
-        # self.pid.SystemOutput = angle
-        # self.pid.SetStepSignal(320)
-        # self.pid.SetInertiaTime(0.01, 0.1)
-        
-        # self.update_real_position()
     
     def time_duration(self, current_angle:int, final_angle:int) -> float:
         """Time to move the robot
@@ -120,8 +119,7 @@ def set_all_angles():
 
     return motor1, motor2, motor3, motor4, motor5, motor6
     
-#motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
-#move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
-#move_bot.reset_motors()
-#move_bot.set_motor(10, 3)
+motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
+move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
+move_bot.update_real_position()
     

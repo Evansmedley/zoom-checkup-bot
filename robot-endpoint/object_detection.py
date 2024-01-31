@@ -1,15 +1,4 @@
 import cv2
-class ObjectDetect:
-    def find_mouth(self, img):
-        """Finds the mouth and draws a bounding box
-        """
-        pass
-    
-    def find_ulnar_nerve(self, img):
-        """Finds the ulnar name and draws bounding box
-        """
-        pass
-
 class ObjectGrab:
 
     def flashlight(self, button: bool):
