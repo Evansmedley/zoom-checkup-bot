@@ -4,6 +4,7 @@ import com.checkupbot.checkupbotbackend.documents.RoboticArmEndpoint;
 import com.checkupbot.checkupbotbackend.repositories.RoboticArmEndpointRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@AutoConfigureDataMongo
 public class MongoTest {
 
     @Autowired
