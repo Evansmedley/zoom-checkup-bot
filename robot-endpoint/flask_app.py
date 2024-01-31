@@ -26,7 +26,7 @@ def liveness_probe():
 @app.post('/changeArm')
 def change_arm():
     app.logger.debug(f'Received request to change arm with value \'{request.json["arm"]}\'')
-    
+
     # If debug mode is not on, select active motor
     if not app.config.get('debug'):
         arm.set_active_motor(request.json['arm'])

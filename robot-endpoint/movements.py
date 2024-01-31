@@ -41,7 +41,7 @@ class Move_Motors:
         }
 
         self.reset_motors()
-        self.pid = PID_controller()
+        self.pid = PID_controller.Positional_PID()
     
     def reset_motors(self) -> None:
         """ 
