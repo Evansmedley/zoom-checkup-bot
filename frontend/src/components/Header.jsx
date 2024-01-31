@@ -1,23 +1,24 @@
-
-const Header = () => {
-
-    return(
-
-        <div className="App-group">
-        <a className="App-link" href="/">
-            Home
-        </a>
-        <a className="App-link" href="/contact">
-            Contact
-        </a>
+const Header = ({ login }) => {
+  return (
+    <div className="App-group">
+      <a className="App-link" href="/">
+        Home
+      </a>
+      <a className="App-link" href="/contact">
+        Contact
+      </a>
+      {!login && (
         <a className="App-link" href="/login">
-            Log In
+          Log In
         </a>
+      )}
+      {login && (
         <a className="App-link" href="/control">
-            Control
+          Control
         </a>
-        </div>
-    )
+      )}
+    </div>
+  );
 };
 
 export default Header;
