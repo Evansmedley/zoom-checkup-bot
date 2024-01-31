@@ -12,7 +12,7 @@ import Chip from "@mui/material/Chip";
 
 import { useState, useEffect } from "react";
 
-const STREAM_URL = "http://172.17.84.71:5000/stream.mjpg";
+const STREAM_URL = "http://172.17.76.72:5000/stream.mjpg";
 
 const Control = () => {
   const download = () => {
