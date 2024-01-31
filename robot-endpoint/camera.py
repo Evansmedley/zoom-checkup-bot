@@ -13,7 +13,7 @@ def face_filter(faces):
     
 
 def follow_function(img):
-    # img = cv2.resize(img, (640, 480))
+    img = cv2.resize(img, (640, 480))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = img.copy()
     faces = faceDetect.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
@@ -31,7 +31,7 @@ def follow_function(img):
 
 # faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 faceDetect = cv2.CascadeClassifier("haarcascade_mouth.xml")
-image = cv2.VideoCapture(0) # , cv2.CAP_GSTREAMER
+image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
 
 width=600
 height=500
