@@ -12,6 +12,8 @@ import Chip from "@mui/material/Chip";
 
 import { useState, useEffect } from "react";
 
+const STREAM_URL = "http://172.17.76.72:5000/stream.mjpg";
+
 const Control = () => {
   const download = () => {
     const noteContent = document.getElementById("notes").value;
@@ -23,13 +25,13 @@ const Control = () => {
     link.click();
   };
 
-  const [arm, setArm] = useState("one");
+  const [arm, setArm] = useState("1");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
-  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState(null);
+  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState("");
 
   const marks = [
     {
@@ -37,10 +39,16 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 100,
+      value: 180,
       label: rightLabel,
     },
   ];
+
+  useEffect(() => {
+    if (selectRobotEndpoint !== "") {
+      handleChangeArm(null, "1");
+    }
+  }, [selectRobotEndpoint]);
 
   const getEndpoints = () => {
     fetch("/endpoint")
@@ -49,43 +57,44 @@ const Control = () => {
   };
 
   const handleLabel = (newArm) => {
-    if (newArm === "one") {
+    if (newArm === "1") {
       setLeftLabel("Left");
       setRightLabel("Right");
-    } else if (newArm === "five") {
+    } else if (newArm === "5") {
       setLeftLabel("Counter");
       setRightLabel("Clockwise");
-    } else if (newArm === "six") {
+    } else if (newArm === "6") {
       setLeftLabel("Close");
       setRightLabel("Open");
-    } else if (newArm === "two" || newArm === "three" || newArm === "four") {
+    } else if (newArm === "2" || newArm === "3" || newArm === "4") {
       setLeftLabel("Down");
       setRightLabel("Up");
     }
   };
 
   const handleChangeArm = (event, newArm) => {
-    fetch(`/changeArm/${selectRobotEndpoint}`, {
-      method: "POST",
-      body: JSON.stringify({
-        arm: newArm,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => {
-      console.error(err);
-    });
-    setArm(newArm);
-    console.log("setting arm: " + newArm);
-    handleLabel(newArm);
+    if (newArm != null) {
+      fetch(`/changeArm/${selectRobotEndpoint}`, {
+        method: "POST",
+        body: JSON.stringify({
+          arm: parseInt(newArm),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+      setArm(newArm);
+      handleLabel(newArm);
+    }
   };
 
   const handleChangeSlider = (event, newValue) => {
     fetch(`/changeSlider/${selectRobotEndpoint}`, {
       method: "POST",
       body: JSON.stringify({
-        move: newValue,
+        move: parseInt(newValue),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -120,11 +129,14 @@ const Control = () => {
     <div className="main">
       <div className="column">
         <p>*Add livestream here*</p>
+        {STREAM_URL && (
+          <img id="camera-stream" src={STREAM_URL} width="640" height="480" />
+        )}
         <p>Current arm: {arm}</p>
         <p>Current state: {slider}</p>
 
         <FormControl size="small" className="drop-down">
-          <InputLabel id="demo-simple-select-helper-label" color="success">
+          <InputLabel id="demo-simple-select-helper-label" color="primary">
             Endpoint
           </InputLabel>
           <Select
@@ -133,7 +145,7 @@ const Control = () => {
             label="Endpoint"
             onChange={handleRobotEndpoint}
             onOpen={getEndpoints}
-            color="success"
+            color="primary"
           >
             {allRobotEndpoints.map((robotEndpointOption) => (
               <MenuItem
@@ -193,12 +205,12 @@ const Control = () => {
             size="md"
             spacing={1}
           >
-            <Button value="one">1</Button>
-            <Button value="two">2</Button>
-            <Button value="three">3</Button>
-            <Button value="four">4</Button>
-            <Button value="five">5</Button>
-            <Button value="six">6</Button>
+            <Button value="1">1</Button>
+            <Button value="2">2</Button>
+            <Button value="3">3</Button>
+            <Button value="4">4</Button>
+            <Button value="5">5</Button>
+            <Button value="6">6</Button>
           </ToggleButtonGroup>
 
           <Slider
@@ -208,6 +220,8 @@ const Control = () => {
             onChange={handleChangeSlider}
             marks={marks}
             color="success"
+            min={0}
+            max={180}
           />
         </div>
       </div>
