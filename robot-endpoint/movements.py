@@ -46,7 +46,7 @@ class Move_Motors:
         time.sleep(1)
     
     def set_all_motors(self) -> None:
-        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 0, 500)
+        self.Arm.Arm_serial_servo_write6(60, 80, 90, 0, 90, 0, 500)
         self.update_real_position()
 
 
