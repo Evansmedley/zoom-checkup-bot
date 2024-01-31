@@ -44,6 +44,11 @@ class Move_Motors:
 
         self.Arm.Arm_serial_servo_write6(80, 90, 90, 0, 90, 165, 500)
         time.sleep(1)
+    
+    def set_all_motors(self) -> None:
+        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 0, 500)
+        self.update_real_position()
+
 
     def boundaries(self, next_angle: int, motor: Motors) -> int:
         """ Forces the robot to stay within the boundaries
@@ -77,9 +82,6 @@ class Move_Motors:
         list_angles = [self.motor1.curr_angle, self.motor2.curr_angle, self.motor3.curr_angle, self.motor4.curr_angle, self.motor5.curr_angle,  self.motor6.curr_angle]
         # list_angles = [90, 10, 0, 0, 0, 0]
         fwd_k = ForwardKinematics(list_angles, [0, 0, 0, 0, 0, 0])
-        print("FWD_K:", fwd_k)
-
-    
 
     def set_motor(self, angle: int, motor_num: int) -> None:
         """
@@ -122,5 +124,5 @@ def set_all_angles():
     
 motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
 move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
-move_bot.update_real_position()
+move_bot.set_all_motors()
     
