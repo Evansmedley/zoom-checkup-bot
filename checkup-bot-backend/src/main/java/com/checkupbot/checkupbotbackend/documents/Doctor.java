@@ -1,11 +1,5 @@
 package com.checkupbot.checkupbotbackend.documents;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,16 +9,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Document("DoctorDB")
 public class Doctor implements UserDetails {
     @Id
     private String id;
     private String cpsoNumber;
     private String password;
+
+    public Doctor() {
+        this("", "", "");
+    }
+
+    public Doctor(String id, String cpsoNumber, String password) {
+        this.id = id;
+        this.cpsoNumber = cpsoNumber;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

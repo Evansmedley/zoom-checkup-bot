@@ -32,7 +32,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // avoid page refresh
-    request("POST", "/api/auth/authenticate", {
+    request("POST", "/authenticate", {
       cpsoNumber: username,
       password: password,
     })
