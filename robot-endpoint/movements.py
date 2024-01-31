@@ -80,6 +80,7 @@ class Move_Motors:
         self.motor6.curr_angle = self.Arm.Arm_serial_servo_read(self.motor6.motor_id)
 
         list_angles = [self.motor1.curr_angle, self.motor2.curr_angle, self.motor3.curr_angle, self.motor4.curr_angle, self.motor5.curr_angle,  self.motor6.curr_angle]
+        print(list_angles)
         # list_angles = [90, 10, 0, 0, 0, 0]
         fwd_k = ForwardKinematics(list_angles, [0, 0, 0, 0, 0, 0])
 
