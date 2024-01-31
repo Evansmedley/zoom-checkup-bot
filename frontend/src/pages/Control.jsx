@@ -13,8 +13,6 @@ import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
 
-const STREAM_URL = "http://172.17.76.72:5000/stream.mjpg";
-
 const Control = () => {
   const download = () => {
     const noteContent = document.getElementById("notes").value;
@@ -32,7 +30,9 @@ const Control = () => {
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
-  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState("");
+  const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
+    useState("");
+  const [streamURL, setStreamURL] = useState("");
 
   const marks = [
     {
@@ -46,10 +46,15 @@ const Control = () => {
   ];
 
   useEffect(() => {
-    if (selectRobotEndpoint !== "") {
+    if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
-  }, [selectRobotEndpoint]);
+  }, [selectRobotEndpointObject]);
+
+  useEffect(() => {
+    console.log("triggered");
+    getEndpoints();
+  }, []);
 
   const getEndpoints = () => {
     fetch("/endpoint", {
@@ -77,7 +82,7 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm != null) {
-      fetch(`/changeArm/${selectRobotEndpoint}`, {
+      fetch(`/changeArm/${selectRobotEndpointObject.uuid}`, {
         method: "POST",
         body: JSON.stringify({
           arm: parseInt(newArm),
@@ -94,7 +99,7 @@ const Control = () => {
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(`/changeSlider/${selectRobotEndpoint}`, {
+    fetch(`/changeSlider/${selectRobotEndpointObject.uuid}`, {
       method: "POST",
       body: JSON.stringify({
         move: parseInt(newValue),
@@ -109,7 +114,8 @@ const Control = () => {
   };
 
   const handleRobotEndpoint = (event) => {
-    setSelectRobotEndpoint(event.target.value);
+    setSelectRobotEndpointObject(event.target.value);
+    setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
   };
 
   const getStatusColour = (status) => {
@@ -133,19 +139,22 @@ const Control = () => {
       <Header login={true} />
       <div className="main">
         <div className="column">
-          {STREAM_URL && (
-            <img id="camera-stream" src={STREAM_URL} width="640" height="300" />
+          <span>Current arm: {arm}</span>
+          <span>Current state: {slider}</span>
+          {streamURL && (
+            <img
+              id="camera-stream"
+              src={streamURL}
+              alt="Select the Robot in the Endpoint drop-down menu"
+            />
           )}
-          <p>Current arm: {arm}</p>
-          <p>Current state: {slider}</p>
-
           <FormControl size="small" className="drop-down">
             <InputLabel id="demo-simple-select-helper-label" color="primary">
               Endpoint
             </InputLabel>
             <Select
               className="endpoint-option"
-              value={selectRobotEndpoint}
+              value={selectRobotEndpointObject.name}
               label="Endpoint"
               onChange={handleRobotEndpoint}
               onOpen={getEndpoints}
@@ -155,7 +164,7 @@ const Control = () => {
                 <MenuItem
                   className="endpoint-option"
                   key={robotEndpointOption.uuid}
-                  value={robotEndpointOption.uuid}
+                  value={robotEndpointOption}
                 >
                   <Chip
                     small="small"
@@ -211,12 +220,12 @@ const Control = () => {
               size="md"
               spacing={1}
             >
-              <Button value="one">1</Button>
-              <Button value="two">2</Button>
-              <Button value="three">3</Button>
-              <Button value="four">4</Button>
-              <Button value="five">5</Button>
-              <Button value="six">6</Button>
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
             </ToggleButtonGroup>
 
             <Slider
