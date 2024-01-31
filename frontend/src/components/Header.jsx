@@ -1,4 +1,9 @@
+import { Button } from "@mui/material";
+import { grey } from "@mui/material/colors";
+
 const Header = ({ login }) => {
+  const headerColor = grey["A200"];
+  console.log(headerColor);
   return (
     <div className="App-group left">
       <div>
@@ -13,6 +18,10 @@ const Header = ({ login }) => {
             Control
           </a>
         )}
+
+        {/* <Button href="#text-buttons" color={headerColor}>
+          Link
+        </Button> */}
       </div>
       {!login && (
         <a className="App-link right" href="/login">
