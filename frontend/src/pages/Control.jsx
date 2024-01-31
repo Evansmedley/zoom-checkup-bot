@@ -139,14 +139,14 @@ const Control = () => {
       <Header login={true} />
       <div className="main">
         <div className="column">
-          <p>Current arm: {arm}</p>
-          <p>Current state: {slider}</p>
+          <span>Current arm: {arm}</span>
+          <span>Current state: {slider}</span>
           {streamURL && (
             <img
               id="camera-stream"
               src={streamURL}
-              width="640"
-              height="480"
+              // width="640"
+              // height="480"
               alt="Select the Robot in the Endpoint drop-down menu"
             />
           )}
@@ -182,64 +182,62 @@ const Control = () => {
         </div>
 
         <div className="column right">
-          <div className="column right">
-            <TextField
-              id="notes"
-              label="Notes"
-              multiline
-              rows={12}
-              fullWidth
-              download="final_notes"
-              variant="outlined"
+          <TextField
+            id="notes"
+            label="Notes"
+            multiline
+            rows={12}
+            fullWidth
+            download="final_notes"
+            variant="outlined"
+            color="success"
+            min={0}
+            max={180}
+          />
+          <div className="save">
+            <Input
+              required
+              id="filename"
+              className="filename"
+              placeholder="Name"
               color="success"
-              min={0}
-              max={180}
             />
-            <div className="save">
-              <Input
-                required
-                id="filename"
-                className="filename"
-                placeholder="Name"
-                color="success"
-              />
 
-              <Button
-                className="saveBtn"
-                onClick={download}
-                variant="soft"
-                size="md"
-                color="success"
-              >
-                Download
-              </Button>
-            </div>
+            <Button
+              className="saveBtn"
+              onClick={download}
+              variant="soft"
+              size="md"
+              color="success"
+            >
+              Download
+            </Button>
+          </div>
 
-            <div className="arm-controls">
-              <ToggleButtonGroup
-                className="buttonGroup"
-                value={arm}
-                onChange={handleChangeArm}
-                size="md"
-                spacing={1}
-              >
-                <Button value="1">1</Button>
-                <Button value="2">2</Button>
-                <Button value="3">3</Button>
-                <Button value="4">4</Button>
-                <Button value="5">5</Button>
-                <Button value="6">6</Button>
-              </ToggleButtonGroup>
+          <div className="arm-controls">
+            <ToggleButtonGroup
+              className="buttonGroup"
+              value={arm}
+              onChange={handleChangeArm}
+              size="md"
+              spacing={1}
+            >
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
+            </ToggleButtonGroup>
 
-              <Slider
-                aria-label="Default"
-                valueLabelDisplay="auto"
-                value={slider}
-                onChange={handleChangeSlider}
-                marks={marks}
-                color="success"
-              />
-            </div>
+            <Slider
+              aria-label="Default"
+              valueLabelDisplay="auto"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
+              color="success"
+            />
           </div>
         </div>
       </div>
