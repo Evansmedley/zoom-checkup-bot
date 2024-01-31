@@ -2,16 +2,17 @@ package com.checkupbot.checkupbotbackend.requests;
 
 public class ChangeArmRequest {
 
-    private String arm;
+    private Integer arm;
 
+  
     public ChangeArmRequest() {
     }
 
-    public String getArm() {
+    public Integer getArm() {
         return arm;
     }
 
-    public void setArm(String arm) {
+    public void setArm(int arm) {
         this.arm = arm;
     }
 

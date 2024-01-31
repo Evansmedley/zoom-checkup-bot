@@ -27,7 +27,7 @@ class Arm():
 
 
     def move(self, angle: int):
-        if self.actove_motor_num is None and angle is None:
+        if self.active_motor_num is None and angle is None:
             pass
         else:
             self.move_bot.set_motor(angle, self.active_motor_num)
