@@ -13,8 +13,6 @@ import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
 
-const STREAM_URL = "http://172.17.76.72:5000/stream.mjpg";
-
 const Control = () => {
   const download = () => {
     const noteContent = document.getElementById("notes").value;
@@ -34,6 +32,7 @@ const Control = () => {
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
+  const [streamURL, setStreamURL] = useState("");
 
   const marks = [
     {
@@ -47,7 +46,6 @@ const Control = () => {
   ];
 
   useEffect(() => {
-    console.log("uuid: " + selectRobotEndpointObject.uuid);
     if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
@@ -117,6 +115,7 @@ const Control = () => {
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
   };
 
   const getStatusColour = (status) => {
@@ -140,12 +139,17 @@ const Control = () => {
       <Header login={true} />
       <div className="main">
         <div className="column">
-          {STREAM_URL && (
-            <img id="camera-stream" src={STREAM_URL} width="640" height="300" />
-          )}
           <p>Current arm: {arm}</p>
           <p>Current state: {slider}</p>
-
+          {streamURL && (
+            <img
+              id="camera-stream"
+              src={streamURL}
+              width="640"
+              height="480"
+              alt="Select the Robot in the Endpoint drop-down menu"
+            />
+          )}
           <FormControl size="small" className="drop-down">
             <InputLabel id="demo-simple-select-helper-label" color="primary">
               Endpoint
@@ -178,62 +182,64 @@ const Control = () => {
         </div>
 
         <div className="column right">
-          <TextField
-            id="notes"
-            label="Notes"
-            multiline
-            rows={12}
-            fullWidth
-            download="final_notes"
-            variant="outlined"
-            color="success"
-            min={0}
-            max={180}
-          />
-          <div className="save">
-            <Input
-              required
-              id="filename"
-              className="filename"
-              placeholder="Name"
+          <div className="column right">
+            <TextField
+              id="notes"
+              label="Notes"
+              multiline
+              rows={12}
+              fullWidth
+              download="final_notes"
+              variant="outlined"
               color="success"
+              min={0}
+              max={180}
             />
+            <div className="save">
+              <Input
+                required
+                id="filename"
+                className="filename"
+                placeholder="Name"
+                color="success"
+              />
 
-            <Button
-              className="saveBtn"
-              onClick={download}
-              variant="soft"
-              size="md"
-              color="success"
-            >
-              Download
-            </Button>
-          </div>
+              <Button
+                className="saveBtn"
+                onClick={download}
+                variant="soft"
+                size="md"
+                color="success"
+              >
+                Download
+              </Button>
+            </div>
 
-          <div className="arm-controls">
-            <ToggleButtonGroup
-              className="buttonGroup"
-              value={arm}
-              onChange={handleChangeArm}
-              size="md"
-              spacing={1}
-            >
-              <Button value="1">1</Button>
-              <Button value="2">2</Button>
-              <Button value="3">3</Button>
-              <Button value="4">4</Button>
-              <Button value="5">5</Button>
-              <Button value="6">6</Button>
-            </ToggleButtonGroup>
+            <div className="arm-controls">
+              <ToggleButtonGroup
+                className="buttonGroup"
+                value={arm}
+                onChange={handleChangeArm}
+                size="md"
+                spacing={1}
+              >
+                <Button value="1">1</Button>
+                <Button value="2">2</Button>
+                <Button value="3">3</Button>
+                <Button value="4">4</Button>
+                <Button value="5">5</Button>
+                <Button value="6">6</Button>
+              </ToggleButtonGroup>
 
-            <Slider
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              value={slider}
-              onChange={handleChangeSlider}
-              marks={marks}
-              color="success"
-            />
+              <Slider
+                aria-label="Default"
+                valueLabelDisplay="auto"
+                value={slider}
+                onChange={handleChangeSlider}
+                marks={marks}
+                color="success"
+              />
+            </div>
           </div>
         </div>
       </div>
