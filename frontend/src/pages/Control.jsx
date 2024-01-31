@@ -29,7 +29,7 @@ const Control = () => {
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
-  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState(null);
+  const [selectRobotEndpoint, setSelectRobotEndpoint] = useState("");
 
   const marks = [
     {
@@ -37,10 +37,16 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 100,
+      value: 180,
       label: rightLabel,
     },
   ];
+
+  useEffect(() => {
+    if (selectRobotEndpoint !== "") {
+      handleChangeArm(null, "1");
+    }
+  }, [selectRobotEndpoint]);
 
   const getEndpoints = () => {
     fetch("/endpoint")
@@ -65,19 +71,21 @@ const Control = () => {
   };
 
   const handleChangeArm = (event, newArm) => {
-    fetch(`/changeArm/${selectRobotEndpoint}`, {
-      method: "POST",
-      body: JSON.stringify({
-        arm: parseInt(newArm),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => {
-      console.error(err);
-    });
-    setArm(newArm);
-    handleLabel(newArm);
+    if (newArm != null) {
+      fetch(`/changeArm/${selectRobotEndpoint}`, {
+        method: "POST",
+        body: JSON.stringify({
+          arm: parseInt(newArm),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+      setArm(newArm);
+      handleLabel(newArm);
+    }
   };
 
   const handleChangeSlider = (event, newValue) => {
@@ -123,7 +131,7 @@ const Control = () => {
         <p>Current state: {slider}</p>
 
         <FormControl size="small" className="drop-down">
-          <InputLabel id="demo-simple-select-helper-label" color="success">
+          <InputLabel id="demo-simple-select-helper-label" color="primary">
             Endpoint
           </InputLabel>
           <Select
@@ -132,7 +140,7 @@ const Control = () => {
             label="Endpoint"
             onChange={handleRobotEndpoint}
             onOpen={getEndpoints}
-            color="success"
+            color="primary"
           >
             {allRobotEndpoints.map((robotEndpointOption) => (
               <MenuItem
@@ -207,6 +215,8 @@ const Control = () => {
             onChange={handleChangeSlider}
             marks={marks}
             color="success"
+            min={0}
+            max={180}
           />
         </div>
       </div>
