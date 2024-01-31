@@ -145,8 +145,6 @@ const Control = () => {
             <img
               id="camera-stream"
               src={streamURL}
-              // width="640"
-              // height="480"
               alt="Select the Robot in the Endpoint drop-down menu"
             />
           )}
