@@ -16,9 +16,46 @@ def face_filter(faces):
 
     if w < 10 or h < 10: return None
     return max_face
-    
+
+# focal length finder function 
+def focal_length_finder(measured_distance, real_width, width_in_rf_image): 
+    focal_length = (width_in_rf_image * measured_distance) / real_width 
+    return focal_length 
+
+# distance estimation function 
+def distance_finder(Focal_Length, real_face_width, face_width_in_frame): 
+    distance = (real_face_width * Focal_Length)/face_width_in_frame 
+    return distance
 
 def follow_function(img):
+    known_distance = 65
+    known_width = 17
+
+    # reading reference_image from directory 
+    ref_image = cv2.imread("Ref_image.jpg") 
+
+    # converting color image to gray scale image 
+    gray_image = cv2.cvtColor(ref_image, cv2.COLOR_BGR2GRAY) 
+  
+    # detecting face in the image 
+    faces = faceDetect.detectMultiScale(gray_image, 1.3, 5) 
+
+    ref_image_face_width = 0
+  
+    # looping through the faces detect in the  
+    # image getting coordinates x, y , 
+    # width and height 
+    for (x, y, h, w) in faces: 
+  
+        # draw the rectangle on the face 
+        cv2.rectangle(ref_image, (x, y), (x+w, y+h), (0, 255, 0), 2) 
+  
+        # getting face width in the pixels 
+        ref_image_face_width = w 
+    
+    focal_length_found = focal_length_finder( 
+        known_distance, known_width, ref_image_face_width) 
+
     img = cv2.resize(img, (640, 480))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = img.copy()
@@ -28,48 +65,57 @@ def follow_function(img):
 
         (x, y, w, h) = face
 
+        distance_to_camera = distance_finder(focal_length_found, known_width, w)
+
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
         cv2.putText(img, 'Person', (280, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
+        cv2.putText(img, 'Distance ' + str(distance_to_camera), (280, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
         point_x = x + w / 2
         point_y = y + h / 2
     return img
     
-def face_enhancer():
-    #Picture whitening formula：p = P*1.4(a)+ b;\n",
+# def face_enhancer():
+#     #Picture whitening formula：p = P*1.4(a)+ b;\n",
 
-"img = cv2.imread('yahboom.jpg',1),
-"imgInfo = img.shape\n",
-"height = imgInfo[0]\n",
-"width = imgInfo[1]\n",
-"#cv2.imshow('src',img)\n",
-"dst = np.zeros((height,width,3),np.uint8)\n",
-"for i in range(0,height):\n",
-"    for j in range(0,width):\n",
-"        (b,g,r) = img[i,j]\n",
-"        bb = int(b*1.3) + 10\n",
-"        gg = int(g*1.2) + 15\n",
-"\n",
-"        if bb>255:\n",
-"            bb = 255\n",
-"        if gg>255:\n",
-"            gg = 255\n",
-"\n",
-"        dst[i,j] = (bb,gg,r)\n",
-"# cv2.imshow('dst',dst)\n",
-"# cv2.waitKey(0)\n",
-"img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)\n",
-"dst = cv2.cvtColor(dst, cv2.COLOR_BGR2RGB)\n",
-"plt.figure(figsize=(14, 6), dpi=100) #Set the size and pixels of the drawing area\n",
-"plt.subplot(121)  #The first in a row and two columns\n",
-"plt.imshow(img)\n",
-"plt.subplot(122)  #The second in a row and two columns\n",
-"plt.imshow(dst)\n",
-"plt.show()"
+# # "img = cv2.imread('yahboom.jpg',1),
+# # "imgInfo = img.shape\n",
+# # "height = imgInfo[0]\n",
+# # "width = imgInfo[1]\n",
+# # "#cv2.imshow('src',img)\n",
+# # "dst = np.zeros((height,width,3),np.uint8)\n",
+# # "for i in range(0,height):\n",
+# # "    for j in range(0,width):\n",
+# # "        (b,g,r) = img[i,j]\n",
+# # "        bb = int(b*1.3) + 10\n",
+# # "        gg = int(g*1.2) + 15\n",
+# # "\n",
+# # "        if bb>255:\n",
+# # "            bb = 255\n",
+# # "        if gg>255:\n",
+# # "            gg = 255\n",
+# # "\n",
+# # "        dst[i,j] = (bb,gg,r)\n",
+# # "# cv2.imshow('dst',dst)\n",
+# # "# cv2.waitKey(0)\n",
+# # "img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)\n",
+# # "dst = cv2.cvtColor(dst, cv2.COLOR_BGR2RGB)\n",
+# # "plt.figure(figsize=(14, 6), dpi=100) #Set the size and pixels of the drawing area\n",
+# # "plt.subplot(121)  #The first in a row and two columns\n",
+# # "plt.imshow(img)\n",
+# # "plt.subplot(122)  #The second in a row and two columns\n",
+# # "plt.imshow(dst)\n",
+# # "plt.show()"
+
 faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
+
+#image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
+
+# For Jeremy's Testing
+image = cv2.VideoCapture(0)
 
 width=600
 height=500
+
 try:
     while True:
         ret, frame = image.read()
