@@ -1,5 +1,4 @@
 import cv2
-import time
 
 def face_filter(faces):
 
@@ -16,22 +15,22 @@ def follow_function(img):
     img = cv2.resize(img, (640, 480))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = img.copy()
-    faces = faceDetect.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+    faces = mouthDetect.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
     if len(faces) != 0:
         face = face_filter(faces)
 
         (x, y, w, h) = face
 
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
-        cv2.putText(img, 'Person', (280, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
+        cv2.putText(img, 'Mouth', (280, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
         # point_x = x + w / 2
         # point_y = y + h / 2
     return img
     
 
-# faceDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-faceDetect = cv2.CascadeClassifier("haarcascade_mouth.xml")
-image = cv2.VideoCapture(0, cv2.CAP_GSTREAMER)
+# mouthDetect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+mouthDetect = cv2.CascadeClassifier("haarcascade_mouth.xml")
+image = cv2.VideoCapture(0) #, cv2.CAP_GSTREAMER)
 
 width=600
 height=500

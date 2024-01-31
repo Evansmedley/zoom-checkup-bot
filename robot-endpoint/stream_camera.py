@@ -81,6 +81,15 @@ class StreamingHandler(BaseHTTPRequestHandler):
         self.wfile.write(jpeg.tobytes())
         self.wfile.write(b'\r\n')
 
+def follow_function(img, mouthDetect):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = mouthDetect.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+
+    for (x, y, w, h) in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
+        cv2.putText(img, 'Mouth', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
+
+    return img
 
 class StreamingServer(socketserver.ThreadingMixIn, HTTPServer):
     allow_reuse_address = True
@@ -93,6 +102,9 @@ def opencv_camera_stream():
         print("Error: Could not open camera.")
         exit()
 
+    # Load mouth cascade classifier
+    mouthDetect = cv2.CascadeClassifier("haarcascade_mouth.xml")
+
     try:
         while True:
             ret, frame = cap.read()
@@ -100,6 +112,9 @@ def opencv_camera_stream():
             if not ret:
                 print("Error: Failed to capture frame.")
                 break
+
+            # Apply follow_function for mouth detection
+            frame = follow_function(frame, mouthDetect)
 
             with output.condition:
                 output.frame = frame
