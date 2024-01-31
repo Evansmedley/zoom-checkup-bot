@@ -32,7 +32,7 @@ def follow_function(img, focal_length):
 
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
         cv2.putText(img, 'Person', (280, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
-        cv2.putText(img, 'Distance ' + str(distance_to_camera), (280, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (105, 105, 105), 2)
+        cv2.putText(img, 'Distance ' + str(distance_to_camera), (280, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
         point_x = x + w / 2
         point_y = y + h / 2
     return img
@@ -48,7 +48,7 @@ width=600
 height=500
 
 try:
-    distanceDetect = distance_detector.DistanceDetector("Ref_image.jpg", 65, 17, faceDetect)
+    distanceDetect = distance_detector.DistanceDetector("Ref_image.jpg", 131, 18, faceDetect)
     focal_length = distanceDetect.get_focal_length()
 
     while True:
