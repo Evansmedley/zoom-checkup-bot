@@ -52,12 +52,11 @@ const Control = () => {
   }, [selectRobotEndpointObject]);
 
   useEffect(() => {
-    console.log("triggered");
     getEndpoints();
   }, []);
 
   const getEndpoints = () => {
-    fetch("/endpoint", {
+    fetch("http://localhost:8080/endpoint", {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     })
       .then((response) => response.json())
@@ -82,15 +81,19 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm != null) {
-      fetch(`/changeArm/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          arm: parseInt(newArm),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch((err) => {
+      fetch(
+        `http://localhost:8080/changeArm/${selectRobotEndpointObject.uuid}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            arm: parseInt(newArm),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getAuthToken()}`,
+          },
+        }
+      ).catch((err) => {
         console.error(err);
       });
       setArm(newArm);
@@ -99,15 +102,19 @@ const Control = () => {
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(`/changeSlider/${selectRobotEndpointObject.uuid}`, {
-      method: "POST",
-      body: JSON.stringify({
-        move: parseInt(newValue),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => {
+    fetch(
+      `http://localhost:8080/changeSlider/${selectRobotEndpointObject.uuid}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          move: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    ).catch((err) => {
       console.error(err);
     });
     setSlider(newValue);
