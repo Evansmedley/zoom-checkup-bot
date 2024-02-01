@@ -1,21 +1,66 @@
-const Header = () => {
+import { Button } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const Header = ({ login }) => {
+  const headerColor = grey["A200"];
+  const { palette } = createTheme();
+
+  const theme = createTheme({
+    palette: {
+      headerColor: palette.augmentColor({
+        color: {
+          main: grey["900"],
+        },
+      }),
+    },
+  });
+
   return (
-    <div className="App-group left">
-      <div>
-        <a className="App-link" href="/">
-          Home
-        </a>
-        <a className="App-link" href="/contact">
-          Contact
-        </a>
-        <a className="App-link" href="/control">
-          Control
-        </a>
+    <ThemeProvider theme={theme}>
+      <div className="App-group left">
+        <div>
+          <Button
+            className="App-link"
+            href="/"
+            color="headerColor"
+            size="large"
+          >
+            Home
+          </Button>
+          <Button
+            className="App-link"
+            href="/contact"
+            color="headerColor"
+            size="large"
+          >
+            Contact
+          </Button>
+          {login && (
+            <Button
+              className="App-link"
+              href="/control"
+              color="headerColor"
+              size="large"
+            >
+              Control
+            </Button>
+          )}
+        </div>
+        <div className="right">
+          {!login && (
+            <Button
+              className="App-link right"
+              href="/login"
+              color="headerColor"
+              size="large"
+            >
+              Log In
+            </Button>
+          )}
+        </div>
       </div>
-      <a className="App-link right" href="/login">
-        Log In
-      </a>
-    </div>
+    </ThemeProvider>
   );
 };
 

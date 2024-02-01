@@ -1,6 +1,7 @@
 import argparse
 from HTTPClient import HTTPClient
 from flask_app import app
+import subprocess
 
 
 def get_args():
@@ -29,6 +30,9 @@ if __name__ == '__main__':
     # Send a POST request to the server to register
     http_client = HTTPClient(args.name)
     uuid = http_client.register(args.server, args.listen_port, args.local)
+
+    # Start camera streaming
+    camera_process = subprocess.Popen(['python3', 'stream_camera.py'])
     
     app.config['name'], app.config['uuid'], app.config['debug'] = \
                     args.name, uuid, args.debug

@@ -9,8 +9,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-
 import { useState, useEffect } from "react";
+import { getAuthToken } from "../axios_helper";
+import Header from "../components/Header";
 
 const Control = () => {
   const download = () => {
@@ -29,7 +30,8 @@ const Control = () => {
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
-  const [selectRobotEndpointObject, setSelectRobotEndpointObject] = useState("");
+  const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
+    useState("");
   const [streamURL, setStreamURL] = useState("");
 
   const marks = [
@@ -44,14 +46,19 @@ const Control = () => {
   ];
 
   useEffect(() => {
-    if (selectRobotEndpointObject !== "") {
+    if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
   }, [selectRobotEndpointObject]);
 
+  useEffect(() => {
+    getEndpoints();
+  }, []);
 
   const getEndpoints = () => {
-    fetch("/endpoint")
+    fetch("http://localhost:8080/endpoint", {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    })
       .then((response) => response.json())
       .then((data) => setAllRobotEndpoints(data));
   };
@@ -74,15 +81,19 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm != null) {
-      fetch(`/changeArm/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          arm: parseInt(newArm),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch((err) => {
+      fetch(
+        `http://localhost:8080/changeArm/${selectRobotEndpointObject.uuid}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            arm: parseInt(newArm),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getAuthToken()}`,
+          },
+        }
+      ).catch((err) => {
         console.error(err);
       });
       setArm(newArm);
@@ -91,15 +102,19 @@ const Control = () => {
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(`/changeSlider/${selectRobotEndpointObject.uuid}`, {
-      method: "POST",
-      body: JSON.stringify({
-        move: parseInt(newValue),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => {
+    fetch(
+      `http://localhost:8080/changeSlider/${selectRobotEndpointObject.uuid}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          move: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    ).catch((err) => {
       console.error(err);
     });
     setSlider(newValue);
@@ -108,7 +123,6 @@ const Control = () => {
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
-
   };
 
   const getStatusColour = (status) => {
@@ -128,104 +142,108 @@ const Control = () => {
   };
 
   return (
-    <div className="main">
-      <div className="column">
-        <p>*Add livestream here*</p>
-        {streamURL && (
-          <img id="camera-stream" src={streamURL} width="640" height="480" alt="Select the Robot in the Endpoint drop-down menu" />
-        )}
-        <p>Current arm: {arm}</p>
-        <p>Current state: {slider}</p>
-        <p>current ip: {streamURL}</p>
-
-        <FormControl size="small" className="drop-down">
-          <InputLabel id="demo-simple-select-helper-label" color="primary">
-            Endpoint
-          </InputLabel>
-          <Select
-            className="endpoint-option"
-            value={selectRobotEndpointObject.name}
-            label="Endpoint"
-            onChange={handleRobotEndpoint}
-            onOpen={getEndpoints}
-            color="primary"
-          >
-            {allRobotEndpoints.map((robotEndpointOption) => (
-              <MenuItem
-                className="endpoint-option"
-                key={robotEndpointOption.uuid}
-                value={robotEndpointOption}
-              >
-                <Chip
-                  small="small"
-                  label={getStatusLabel(robotEndpointOption.active)}
-                  color={getStatusColour(robotEndpointOption.active)}
-                  size="small"
-                />
-                <ListItemText primary={robotEndpointOption.name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className="column right">
-        <TextField
-          id="notes"
-          label="Notes"
-          multiline
-          rows={12}
-          fullWidth
-          download="final_notes"
-          variant="outlined"
-          color="success"
-        />
-        <div className="save">
-          <Input
-            required
-            id="filename"
-            className="filename"
-            placeholder="Name"
-            color="success"
-          />
-
-          <Button
-            className="saveBtn"
-            onClick={download}
-            variant="soft"
-            size="md"
-            color="success"
-          >
-            Download
-          </Button>
+    <div>
+      <Header login={true} />
+      <div className="main">
+        <div className="column">
+          <span>Current arm: {arm}</span>
+          <span>Current state: {slider}</span>
+          {streamURL && (
+            <img
+              id="camera-stream"
+              src={streamURL}
+              alt="Select the Robot in the Endpoint drop-down menu"
+            />
+          )}
+          <FormControl size="small" className="drop-down">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
+              Endpoint
+            </InputLabel>
+            <Select
+              className="endpoint-option"
+              value={selectRobotEndpointObject.name}
+              label="Endpoint"
+              onChange={handleRobotEndpoint}
+              onOpen={getEndpoints}
+              color="primary"
+            >
+              {allRobotEndpoints.map((robotEndpointOption) => (
+                <MenuItem
+                  className="endpoint-option"
+                  key={robotEndpointOption.uuid}
+                  value={robotEndpointOption}
+                >
+                  <Chip
+                    small="small"
+                    label={getStatusLabel(robotEndpointOption.active)}
+                    color={getStatusColour(robotEndpointOption.active)}
+                    size="small"
+                  />
+                  <ListItemText primary={robotEndpointOption.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
 
-        <div className="arm-controls">
-          <ToggleButtonGroup
-            className="buttonGroup"
-            value={arm}
-            onChange={handleChangeArm}
-            size="md"
-            spacing={1}
-          >
-            <Button value="1">1</Button>
-            <Button value="2">2</Button>
-            <Button value="3">3</Button>
-            <Button value="4">4</Button>
-            <Button value="5">5</Button>
-            <Button value="6">6</Button>
-          </ToggleButtonGroup>
-
-          <Slider
-            aria-label="Default"
-            valueLabelDisplay="auto"
-            value={slider}
-            onChange={handleChangeSlider}
-            marks={marks}
+        <div className="column right">
+          <TextField
+            id="notes"
+            label="Notes"
+            multiline
+            rows={12}
+            fullWidth
+            download="final_notes"
+            variant="outlined"
             color="success"
             min={0}
             max={180}
           />
+          <div className="save">
+            <Input
+              required
+              id="filename"
+              className="filename"
+              placeholder="Name"
+              color="success"
+            />
+
+            <Button
+              className="saveBtn"
+              onClick={download}
+              variant="soft"
+              size="md"
+              color="success"
+            >
+              Download
+            </Button>
+          </div>
+
+          <div className="arm-controls">
+            <ToggleButtonGroup
+              className="buttonGroup"
+              value={arm}
+              onChange={handleChangeArm}
+              size="md"
+              spacing={1}
+            >
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
+            </ToggleButtonGroup>
+
+            <Slider
+              aria-label="Default"
+              valueLabelDisplay="auto"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
+              color="success"
+            />
+          </div>
         </div>
       </div>
     </div>
