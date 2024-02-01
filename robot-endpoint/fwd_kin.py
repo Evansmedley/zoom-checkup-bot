@@ -66,8 +66,8 @@ class ForwardKinematics:
         l4 = 0.07385 # servo 4 to servo 5
         l5 = 0.05457 # servo 5 to gripper
 
-        self.a = [l0, l1, l2, l3, l4, l5] # link length in meters
-        self.d = [0, 0, 0, 0, 0, 0] # translation
+        self.a = [0, 0, 0, 0, l4, 0] # link length in meters
+        self.d = [l0, l1, l2, l3, 0, l5] # translation
         self.main()
 
     def transformation_matrix(self, i: int) -> list:
@@ -79,9 +79,9 @@ class ForwardKinematics:
         Returns:
             list: Transformation matrix for joint i
         """
-        t_m = [[m.cos(self.theta[i-1]), -1 * m.sin(self.theta[i-1]) * m.cos(self.alpha[i-1]), m.sin(self.theta[i-1]) * m.sin(self.alpha[i-1]), self.a[i-1]*m.cos(self.theta[i-1])],
-            [m.sin(self.theta[i-1]), m.cos(self.theta[i-1])*m.cos(self.alpha[i-1]), -1 * m.cos(self.theta[i-1])*m.sin(self.alpha[i-1]), self.a[i-1]*m.sin(self.theta[i-1])],
-            [0, m.sin(self.alpha[i-1]), m.cos(self.alpha[i-1]), self.d[i-1]],
+        t_m = [[int(m.cos(self.theta[i-1])), int(-1 * m.sin(self.theta[i-1]) * m.cos(self.alpha[i-1])),int( m.sin(self.theta[i-1]) * m.sin(self.alpha[i-1])), int(self.a[i-1]*m.cos(self.theta[i-1]))],
+            [int(m.sin(self.theta[i-1])), int(m.cos(self.theta[i-1])*m.cos(self.alpha[i-1])), int(-1 * m.cos(self.theta[i-1])*m.sin(self.alpha[i-1])), int(self.a[i-1]*m.sin(self.theta[i-1]))],
+            [0, int(m.sin(self.alpha[i-1])), int(m.cos(self.alpha[i-1])), int(self.d[i-1])],
             [0, 0, 0, 1]]
         return t_m
     
@@ -98,11 +98,11 @@ class ForwardKinematics:
         """
         if i == len(matrix_list):
             return current_matrix
-        print("MATRIX LIST[i]:", i)
-        pprint.pprint(matrix_list[i])
+        # print("MATRIX LIST[i]:", i)
+        # pprint.pprint(matrix_list[i])
         current_matrix = np.matmul(current_matrix, matrix_list[i])
-        print("CURRENT MATRIX:", i)
-        pprint.pprint(current_matrix)
+        # print("CURRENT MATRIX:", i)
+        # pprint.pprint(current_matrix)
         return self.multiply_matrices(i=i+1, matrix_list=matrix_list, current_matrix=current_matrix)
 
     def main(self):
@@ -111,12 +111,13 @@ class ForwardKinematics:
         matrix_list = []
         for i in range(1,7):
             matrix_list.append(np.array(self.transformation_matrix(i)))
-        pprint.pprint(matrix_list)
+        # pprint.pprint(matrix_list)
+        print("FINAL VALUES")
         pprint.pprint(self.multiply_matrices(i=1, matrix_list=matrix_list, current_matrix=matrix_list[0]))
         
 #Test values
-fwd_k = ForwardKinematics([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0])
-
+fwd_k = ForwardKinematics([90, 90, 0, 0, 0, 0], [0, 0, 0, 0, 90, 0])
+# print(f_)
 print("DOFBOT")
-Dofbot_Params()
+# Dofbot_Params()
 
