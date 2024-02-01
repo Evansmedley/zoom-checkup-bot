@@ -32,7 +32,7 @@ if __name__ == '__main__':
     uuid = http_client.register(args.server, args.listen_port, args.local)
 
     # Start camera streaming
-    camera_process = subprocess.Popen(['python3', 'camera.py'])
+    camera_process = subprocess.Popen(['python3', 'stream_camera.py'])
     
     app.config['name'], app.config['uuid'], app.config['debug'] = \
                     args.name, uuid, args.debug
