@@ -29,7 +29,8 @@ const Control = () => {
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
-  const [selectRobotEndpointObject, setSelectRobotEndpointObject] = useState("");
+  const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
+    useState("");
   const [streamURL, setStreamURL] = useState("");
 
   const marks = [
@@ -48,7 +49,6 @@ const Control = () => {
       handleChangeArm(null, "1");
     }
   }, [selectRobotEndpointObject]);
-
 
   const getEndpoints = () => {
     fetch("/endpoint")
@@ -108,7 +108,6 @@ const Control = () => {
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
-
   };
 
   const getStatusColour = (status) => {
@@ -130,13 +129,15 @@ const Control = () => {
   return (
     <div className="main">
       <div className="column">
-        <p>*Add livestream here*</p>
         {streamURL && (
-          <img id="camera-stream" src={streamURL} width="640" height="480" alt="Select the Robot in the Endpoint drop-down menu" />
+          <img
+            id="camera-stream"
+            src={streamURL}
+            alt="Select the Robot in the Endpoint drop-down menu"
+          />
         )}
-        <p>Current arm: {arm}</p>
-        <p>Current state: {slider}</p>
-        <p>current ip: {streamURL}</p>
+        <span>Current arm: {arm}</span>
+        <span>Current state: {slider}</span>
 
         <FormControl size="small" className="drop-down">
           <InputLabel id="demo-simple-select-helper-label" color="primary">
