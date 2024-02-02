@@ -33,10 +33,6 @@ public class ArmMovementController {
         restTemplate = new RestTemplate();
     }
 
-    @GetMapping
-    public String root() {
-        return "hi";
-    }
 
     @PostMapping(value = "/changeArm/{uuid}")
     public void changeArm(@RequestBody ChangeArmRequest changeArm, @PathVariable("uuid") String uuid) {
