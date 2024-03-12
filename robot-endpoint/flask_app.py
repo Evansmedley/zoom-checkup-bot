@@ -1,5 +1,6 @@
 import logging
 from flask import Flask, request
+from flask_cors import CORS
 
 arm = None
 
@@ -10,6 +11,7 @@ except:
     print("test")
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 app.logger.setLevel(logging.DEBUG)
 
