@@ -33,6 +33,7 @@ const Control = () => {
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
   const [streamURL, setStreamURL] = useState("");
+  const [armEndpoint, setArmEndpoint] = useState("");
 
   const marks = [
     {
@@ -81,19 +82,17 @@ const Control = () => {
 
   const handleChangeArm = (event, newArm) => {
     if (newArm != null) {
-      fetch(
-        `http://localhost:8080/changeArm/${selectRobotEndpointObject.uuid}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            arm: parseInt(newArm),
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getAuthToken()}`,
-          },
-        }
-      ).catch((err) => {
+      console.log(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`);
+      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
+        method: "POST",
+        body: JSON.stringify({
+          arm: parseInt(newArm),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }).catch((err) => {
         console.error(err);
       });
       setArm(newArm);
@@ -102,19 +101,20 @@ const Control = () => {
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(
-      `http://localhost:8080/changeSlider/${selectRobotEndpointObject.uuid}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          move: parseInt(newValue),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    ).catch((err) => {
+    console.log(
+      `${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`
+    );
+
+    fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
+      method: "POST",
+      body: JSON.stringify({
+        move: parseInt(newValue),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
       console.error(err);
     });
     setSlider(newValue);
@@ -123,6 +123,9 @@ const Control = () => {
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
+    setArmEndpoint(
+      "http://" + event.target.value.ip + ":" + event.target.value.port
+    );
   };
 
   const getStatusColour = (status) => {
