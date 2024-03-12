@@ -40,7 +40,7 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 180,
+      value: 100,
       label: rightLabel,
     },
   ];
