@@ -27,7 +27,8 @@ public class SecurityConfig {
                         "/authenticate",
                         "/endpoint/register",
                         "/v3/**",
-                        "/swagger-ui/**"
+                        "/swagger-ui/**",
+                        "/autoconfig"
                 ).permitAll().anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
