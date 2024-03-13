@@ -20,14 +20,20 @@ jobs:
         service_account_key: ${{ secrets.GCLOUD_SA_KEY }}
         export_default_credentials: true
 
-    - name: Set up JDK 17
+    - name: set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'zulu'
         cache: maven
+
+    - name: provide mongodb credentials
+      run: |
+        echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" >> $GITHUB_ENV
+        echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> $GITHUB_ENV
+        echo "MONGO_ENV=${{ secrets.MONGO_ENV }}" >> $GITHUB_ENV
         
-    - name: Build
+    - name: build
       run: mvn -B package --file ./checkup-bot-backend/pom.xml
 
     
