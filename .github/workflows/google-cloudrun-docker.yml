@@ -19,6 +19,17 @@ jobs:
         project_id: ${{ secrets.GCLOUD_PROJECT }}
         service_account_key: ${{ secrets.GCLOUD_SA_KEY }}
         export_default_credentials: true
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+        cache: maven
+        
+    - name: Build
+      run: mvn -B package --file ./checkup-bot-backend/pom.xml
+
     
     - name: build and push docker
       env:
