@@ -43,4 +43,4 @@ jobs:
       run: |
         gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
         docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/backend:latest ./checkup-bot-backend/
-        docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/nginx:latest
+        docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/backend:latest
