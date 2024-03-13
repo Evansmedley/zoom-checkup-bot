@@ -1,4 +1,4 @@
-name: Build and Deploy Backend to Cloud Run
+name: Deploy backend
 
 on:
   push:
