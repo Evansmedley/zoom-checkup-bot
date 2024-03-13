@@ -1,4 +1,4 @@
-name: Build and Deploy Backend to Cloud Run
+name: Deploy Backend
 
 on:
   push:
@@ -25,5 +25,5 @@ jobs:
         GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       run: |
         gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
-        docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/backend:latest ./checkup-bot-backend/
-        docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/nginx:latest
+        docker build -t northamerica-northeast1-docker.pkg.dev/checkup-bot-stage/checkup-bot-stage/backend:latest ./checkup-bot-backend/
+        docker push northamerica-northeast1-docker.pkg.dev/checkup-bot-stage/checkup-bot-stage/nginx:latest
