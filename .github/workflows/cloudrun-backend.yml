@@ -50,10 +50,3 @@ jobs:
                 --build-arg MONGO_ENV=${{ secrets.MONGO_ENV }} \
                 ./checkup-bot-backend/
         docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/backend:latest
-
-    - name: new revision
-      uses: google-github-actions/deploy-cloudrun@v0
-      with:
-        service: backend
-        region: ${{ env.REGION }}
-        image: northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/backend:latest
