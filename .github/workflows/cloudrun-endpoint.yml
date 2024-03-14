@@ -22,3 +22,13 @@ jobs:
         project_id: ${{ secrets.GCLOUD_PROJECT }}
         service_account_key: ${{ secrets.GCLOUD_SA_KEY }}
         export_default_credentials: true
+
+    - name: build and push docker
+      env:
+        GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
+      run: |
+        gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
+        docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/endpoint:latest \
+                --build-arg SERVER_ADDRESS=${{ secrets.SERVER_ADDRESS }} \
+                ./robot-endpoint/
+        docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/endpoint:latest
