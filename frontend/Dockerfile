@@ -13,4 +13,8 @@ ENV PORT 8080
 # TODO: fix dependenciess to remove force
 RUN npm install --force
 
-CMD ["npm", "start"]
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD serve -s build

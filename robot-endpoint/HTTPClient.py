@@ -39,7 +39,7 @@ class HTTPClient():
         return ip
     
                 
-    def register(self, server_host: str, listen_port: int, local=False):
+    def register(self, server_host: str, listen_port: int, endpoint_hostname: str, local=False):
         if local:
             dest_addr = f"http://{server_host}:{SERVER_PORT}{ENDPOINT_PATH}"
         else:
@@ -58,6 +58,9 @@ class HTTPClient():
             'port': listen_port,
             'active': False
         }
+        
+        if endpoint_hostname is not None:
+            payload['ip'] = endpoint_hostname
     
         headers = {
             'Content-Type': 'application/json'
