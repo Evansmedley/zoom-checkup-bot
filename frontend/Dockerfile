@@ -9,6 +9,8 @@ COPY src/ /app/src
 COPY public/ /app/public
 
 ENV PORT 8080
+ARG REACT_APP_HOSTNAME
+ENV REACT_APP_HOSTNAME ${REACT_APP_HOSTNAME}
 
 # TODO: fix dependenciess to remove force
 RUN npm install --force

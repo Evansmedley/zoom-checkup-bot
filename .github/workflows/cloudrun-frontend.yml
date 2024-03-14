@@ -28,5 +28,7 @@ jobs:
         GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       run: |
         gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
-        docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/frontend:latest ./frontend/
+        docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/frontend:latest \
+                --build-arg REACT_APP_HOSTNAME=${{ secrets.SERVER_ADDRESS }} \
+                ./frontend/
         docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/frontend:latest
