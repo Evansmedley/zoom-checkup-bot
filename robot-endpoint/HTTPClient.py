@@ -43,7 +43,8 @@ class HTTPClient():
         if local:
             dest_addr = f"http://{server_host}:{SERVER_PORT}{ENDPOINT_PATH}"
         else:
-            dest_addr = f"http://{server_host}{ENDPOINT_PATH}"
+            # For sending to cloud run https is needed
+            dest_addr = f"https://{server_host}{ENDPOINT_PATH}"
         print(f"URI of server to register with -> {dest_addr}")
     
         client_ip = '127.0.0.1' if local else self.get_external_client_ip()
