@@ -30,5 +30,6 @@ jobs:
         gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
         docker build -t northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/endpoint:latest \
                 --build-arg SERVER_ADDRESS=${{ secrets.SERVER_ADDRESS }} \
+                --build-arg CLIENT_ADDRESS=${{ secrets.CLIENT_ADDRESS }} \
                 ./robot-endpoint/
         docker push northamerica-northeast1-docker.pkg.dev/$GCLOUD_PROJECT/checkup-bot-stage/endpoint:latest
