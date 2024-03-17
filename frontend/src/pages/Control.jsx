@@ -12,6 +12,9 @@ import Chip from "@mui/material/Chip";
 import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
+import debounce from "lodash/debounce";
+import { useRef } from "react";
+import OutlinedInput from "@mui/material/OutlinedInput";
 
 const Control = () => {
   const download = () => {
@@ -56,6 +59,44 @@ const Control = () => {
     getEndpoints();
   }, []);
 
+  const debounceSlider = useRef(
+    debounce((newValue) => {
+      console.log("Changed value:", newValue);
+
+      fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
+        method: "POST",
+        body: JSON.stringify({
+          move: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+    }, 100)
+  );
+
+  const debounceArm = useRef(
+    debounce((newValue) => {
+      console.log("Changed arm:", newValue);
+
+      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
+        method: "POST",
+        body: JSON.stringify({
+          arm: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+    }, 100)
+  );
+
   const getEndpoints = () => {
     fetch("http://localhost:8080/endpoint", {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
@@ -80,44 +121,17 @@ const Control = () => {
     }
   };
 
-  const handleChangeArm = (event, newArm) => {
-    if (newArm != null) {
-      console.log(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`);
-      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          arm: parseInt(newArm),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      handleLabel(newArm);
+  const handleChangeArm = (event, newValue) => {
+    if (newValue != null) {
+      setArm(newValue);
+      debounceArm.current?.(newValue);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
-    console.log(
-      `${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`
-    );
-
-    fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
-      method: "POST",
-      body: JSON.stringify({
-        move: parseInt(newValue),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    }).catch((err) => {
-      console.error(err);
-    });
     setSlider(newValue);
+    handleLabel(newValue);
+    debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
@@ -169,6 +183,7 @@ const Control = () => {
               onChange={handleRobotEndpoint}
               onOpen={getEndpoints}
               color="primary"
+              input={<OutlinedInput label="Name" />}
             >
               {allRobotEndpoints.map((robotEndpointOption) => (
                 <MenuItem
@@ -229,6 +244,7 @@ const Control = () => {
               onChange={handleChangeArm}
               size="md"
               spacing={1}
+              defaultValue="1"
             >
               <Button value="1">1</Button>
               <Button value="2">2</Button>
@@ -245,6 +261,7 @@ const Control = () => {
               onChange={handleChangeSlider}
               marks={marks}
               color="success"
+              defaultValue={0}
             />
           </div>
         </div>
