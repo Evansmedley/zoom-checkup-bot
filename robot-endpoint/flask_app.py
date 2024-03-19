@@ -11,7 +11,7 @@ except:
     print("test")
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"*": {"origins": "*"}})
+cors = CORS(app)
 
 app.logger.setLevel(logging.DEBUG)
 

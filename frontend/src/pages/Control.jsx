@@ -2,7 +2,7 @@ import Slider from "@mui/material/Slider";
 import * as React from "react";
 import Button from "@mui/joy/Button";
 import ToggleButtonGroup from "@mui/joy/ToggleButtonGroup";
-import { ListItemText, TextField } from "@mui/material";
+import { Icon, ListItemText, TextField } from "@mui/material";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,6 +12,9 @@ import Chip from "@mui/material/Chip";
 import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
+import debounce from "lodash/debounce";
+import { useRef } from "react";
+import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 
 const Control = () => {
   const download = () => {
@@ -27,6 +30,7 @@ const Control = () => {
   const [arm, setArm] = useState("1");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
+  const [rangeMax, setRangeMax] = useState(180);
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
@@ -41,20 +45,55 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 100,
+      value: rangeMax,
       label: rightLabel,
     },
   ];
 
   useEffect(() => {
+    getEndpoints();
     if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
-  }, [selectRobotEndpointObject]);
-
-  useEffect(() => {
-    getEndpoints();
   }, []);
+
+  const debounceSlider = useRef(
+    debounce((newValue) => {
+      console.log("Changed value:", newValue);
+
+      fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
+        method: "POST",
+        body: JSON.stringify({
+          move: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+    }, 100)
+  );
+
+  const debounceArm = useRef(
+    debounce((newValue) => {
+      console.log("Changed arm:", newValue);
+
+      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
+        method: "POST",
+        body: JSON.stringify({
+          arm: parseInt(newValue),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }).catch((err) => {
+        console.error(err);
+      });
+    }, 100)
+  );
 
   const getEndpoints = () => {
     fetch("http://localhost:8080/endpoint", {
@@ -65,59 +104,53 @@ const Control = () => {
   };
 
   const handleLabel = (newArm) => {
-    if (newArm === "1") {
-      setLeftLabel("Left");
-      setRightLabel("Right");
-    } else if (newArm === "5") {
-      setLeftLabel("Counter");
-      setRightLabel("Clockwise");
-    } else if (newArm === "6") {
-      setLeftLabel("Close");
-      setRightLabel("Open");
-    } else if (newArm === "2" || newArm === "3" || newArm === "4") {
-      setLeftLabel("Down");
-      setRightLabel("Up");
+    switch (newArm) {
+      case "1":
+        setLeftLabel("Left");
+        setRightLabel("Right");
+        setRangeMax(180);
+        break;
+      case "2":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "3":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "4":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "5":
+        setLeftLabel("Counter-Clockwise");
+        setRightLabel("Clockwise");
+        setRangeMax(270);
+        break;
+      case "6":
+        setLeftLabel("Close");
+        setRightLabel("Open");
+        setRangeMax(180);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleChangeArm = (event, newArm) => {
-    if (newArm != null) {
-      console.log(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`);
-      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          arm: parseInt(newArm),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      handleLabel(newArm);
+  const handleChangeArm = (event, newValue) => {
+    if (newValue != null) {
+      setArm(newValue);
+      handleLabel(newValue);
+      debounceArm.current?.(newValue);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
-    console.log(
-      `${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`
-    );
-
-    fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
-      method: "POST",
-      body: JSON.stringify({
-        move: parseInt(newValue),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    }).catch((err) => {
-      console.error(err);
-    });
     setSlider(newValue);
+    debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
@@ -149,44 +182,45 @@ const Control = () => {
       <Header login={true} />
       <div className="main">
         <div className="column">
-          <span>Current arm: {arm}</span>
-          <span>Current state: {slider}</span>
-          {streamURL && (
-            <img
-              id="camera-stream"
-              src={streamURL}
-              alt="Select the Robot in the Endpoint drop-down menu"
-            />
+          {!streamURL && (
+            <div className="no-stream-view">
+              <NoPhotographyIcon></NoPhotographyIcon>
+              <p>Please choose an endpoint</p>
+            </div>
           )}
-          <FormControl size="small" className="drop-down">
-            <InputLabel id="demo-simple-select-helper-label" color="primary">
-              Endpoint
-            </InputLabel>
-            <Select
-              className="endpoint-option"
-              value={selectRobotEndpointObject.name}
-              label="Endpoint"
-              onChange={handleRobotEndpoint}
-              onOpen={getEndpoints}
-              color="primary"
+
+          {streamURL && (
+            <img id="camera-stream" src={streamURL} alt="Stream error" />
+          )}
+          <div className="controls">
+            <ToggleButtonGroup
+              className="arm-buttons"
+              value={arm}
+              onChange={handleChangeArm}
+              size="md"
+              spacing={1}
+              defaultValue="1"
             >
-              {allRobotEndpoints.map((robotEndpointOption) => (
-                <MenuItem
-                  className="endpoint-option"
-                  key={robotEndpointOption.uuid}
-                  value={robotEndpointOption}
-                >
-                  <Chip
-                    small="small"
-                    label={getStatusLabel(robotEndpointOption.active)}
-                    color={getStatusColour(robotEndpointOption.active)}
-                    size="small"
-                  />
-                  <ListItemText primary={robotEndpointOption.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
+            </ToggleButtonGroup>
+
+            <Slider
+              aria-label="Default"
+              valueLabelDisplay="on"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
+              color="success"
+              defaultValue={0}
+              max={rangeMax}
+              min={0}
+            />
+          </div>
         </div>
 
         <div className="column right">
@@ -221,32 +255,35 @@ const Control = () => {
               Download
             </Button>
           </div>
-
-          <div className="arm-controls">
-            <ToggleButtonGroup
-              className="buttonGroup"
-              value={arm}
-              onChange={handleChangeArm}
-              size="md"
-              spacing={1}
+          <FormControl size="small" className="drop-down">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
+              Endpoint
+            </InputLabel>
+            <Select
+              className="endpoint-option"
+              value={selectRobotEndpointObject.name}
+              label="Endpoint"
+              onChange={handleRobotEndpoint}
+              onOpen={getEndpoints}
+              color="primary"
             >
-              <Button value="1">1</Button>
-              <Button value="2">2</Button>
-              <Button value="3">3</Button>
-              <Button value="4">4</Button>
-              <Button value="5">5</Button>
-              <Button value="6">6</Button>
-            </ToggleButtonGroup>
-
-            <Slider
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              value={slider}
-              onChange={handleChangeSlider}
-              marks={marks}
-              color="success"
-            />
-          </div>
+              {allRobotEndpoints.map((robotEndpointOption) => (
+                <MenuItem
+                  className="endpoint-option"
+                  key={robotEndpointOption.uuid}
+                  value={robotEndpointOption}
+                >
+                  <Chip
+                    small="small"
+                    label={getStatusLabel(robotEndpointOption.active)}
+                    color={getStatusColour(robotEndpointOption.active)}
+                    size="small"
+                  />
+                  <ListItemText primary={robotEndpointOption.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
       </div>
     </div>
