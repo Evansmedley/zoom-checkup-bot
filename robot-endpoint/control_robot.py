@@ -41,7 +41,3 @@ class Arm():
     def cleanup():
         del Arm
 
-    # NOT SURE WHAT TO DO WITH THIS :)        
-    # th1 = threading.Thread(target=move_bot)
-    # th1.setDaemon(True)
-    # th1.start()

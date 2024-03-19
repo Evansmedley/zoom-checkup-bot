@@ -1,7 +1,7 @@
 import time
 import threading
 from Arm_Lib import Arm_Device
-from fwd_kin import ForwardKinematics
+# from fwd_kin import ForwardKinematics
 from dataclasses import dataclass
 
 MOVEMENT_TIME = 1000
