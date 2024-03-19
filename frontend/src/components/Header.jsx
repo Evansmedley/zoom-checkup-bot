@@ -49,12 +49,7 @@ const Header = ({ login }) => {
         </div>
         <div className="right">
           {!login && (
-            <Button
-              className="App-link right"
-              href="/login"
-              color="headerColor"
-              size="large"
-            >
+            <Button href="/login" color="headerColor" size="large">
               Log In
             </Button>
           )}

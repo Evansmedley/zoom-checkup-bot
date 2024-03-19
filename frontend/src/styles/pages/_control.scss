@@ -1,34 +1,40 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  .main {
-    display: flex;
-    padding-right: 2rem;
-    padding-left: 4rem;
-    gap: 10px;
-  }
-  
-  .column {
-    display: flex;
-    flex-direction: column;
-    flex: 50%;
-  }
+  box-sizing: border-box;
+}
 
-  .drop-down{
-    width: 80%;
-  }
+.main {
+  display: flex;
+  padding-right: 1rem;
+  padding-left: 3rem;
+  gap: 50px;
+}
 
-.arm-controls {
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 50%;
+}
+
+.drop-down{
+  width: 90%;
+  display: flex;
+  align-self: center;
+}
+
+.controls {
     display: flex;
     flex-direction: column;
     justify-items: center;
+    width: 85%;
+    padding-left: 2rem;
 }
 
-.buttonGroup {
+.arm-buttons {
     position: relative;
     padding-bottom: 2rem;
-    padding-left: 12rem;
+    padding-left: 8rem;
+    padding-top: 10px;
+    padding-bottom: 40px;
 }
 
 
@@ -41,8 +47,6 @@
 }
 
 .right{
-    display: flex;
-    flex-direction: column;
     gap: 1rem;
 }
 
@@ -55,6 +59,15 @@
 }
 
 #camera-stream{
-  width: 40rem;
-  height: 30rem;
+  width: 38rem;
+  height: 28rem;
+}
+
+.no-stream-view {
+  width: 38rem;
+  height: 28rem;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
