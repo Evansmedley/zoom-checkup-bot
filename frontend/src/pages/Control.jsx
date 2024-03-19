@@ -61,6 +61,7 @@ const Control = () => {
     debounce((newValue) => {
       console.log("Changed value:", newValue);
 
+      let startTime = performance.now();
       fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
         method: "POST",
         body: JSON.stringify({
@@ -73,6 +74,7 @@ const Control = () => {
       }).catch((err) => {
         console.error(err);
       });
+      setEndpointLatency(`${performance.now() - startTime} ms`);
     }, 100)
   );
 
@@ -80,6 +82,7 @@ const Control = () => {
     debounce((newValue) => {
       console.log("Changed arm:", newValue);
 
+      let startTime = performance.now();
       fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
         method: "POST",
         body: JSON.stringify({
@@ -92,6 +95,7 @@ const Control = () => {
       }).catch((err) => {
         console.error(err);
       });
+      setEndpointLatency(`${performance.now() - startTime} ms`);
     }, 100)
   );
 
@@ -155,6 +159,8 @@ const Control = () => {
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    console.log(event.target.value)
+    setEndpointLatencyDisabled(false)
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
     setArmEndpoint(
       "http://" + event.target.value.ip + ":" + event.target.value.port
@@ -176,6 +182,9 @@ const Control = () => {
       return "Inactive";
     }
   };
+
+  const [endpointLatency, setEndpointLatency] = useState("-");
+  const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
 
   return (
     <div>
@@ -284,6 +293,18 @@ const Control = () => {
               ))}
             </Select>
           </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
+              color="success"
+              InputProps={{readOnly: true}}
+              style={{ width: '50%', margin: 'auto'}}
+            />
         </div>
       </div>
     </div>
