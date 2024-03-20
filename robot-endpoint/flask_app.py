@@ -1,6 +1,5 @@
 import logging
 from flask import Flask, request
-from flask_cors import CORS
 
 arm = None
 
@@ -11,9 +10,20 @@ except:
     print("test")
 
 app = Flask(__name__)
-cors = CORS(app)
 
 app.logger.setLevel(logging.DEBUG)
+
+
+def cors_preflight_response():
+    headers = {'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+               'Access-Control-Allow-Methods': 'POST'}
+    return ('', 204, headers)
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 @app.post('/liveness')
@@ -25,8 +35,11 @@ def liveness_probe():
         return {'uuid': app.config.get('uuid')}
 
 
-@app.post('/changeArm')
+@app.route('/changeArm', methods=['POST', 'OPTIONS'])
 def change_arm():
+    if request.method == 'OPTIONS':
+        return cors_preflight_response()
+    
     app.logger.debug(f'Received request to change arm with value \'{request.json["arm"]}\'')
     
     # If debug mode is not on, select active motor
@@ -35,8 +48,12 @@ def change_arm():
     
     return ""
         
-@app.post('/changeSlider')
+
+@app.route('/changeSlider', methods=['POST', 'OPTIONS'])
 def change_slider():
+    if request.method == 'OPTIONS':
+        return cors_preflight_response()
+    
     app.logger.debug(f'Received request to change slider with value \'{request.json["move"]}\'')
     
     # If debug mode is not on, instruct the robotic arm to move
