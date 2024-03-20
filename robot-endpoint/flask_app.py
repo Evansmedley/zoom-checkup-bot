@@ -14,6 +14,8 @@ app = Flask(__name__)
 
 app.logger.setLevel(logging.DEBUG)
 
+arm_state = ArmState()
+
 
 def cors_preflight_response():
     headers = {'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -60,5 +62,7 @@ def change_slider():
     # If debug mode is not on, instruct the robotic arm to move
     if not app.config.get('debug'):
         arm.move(request.json['move'])
+    else:
+        arm_state.set_motor_angle(request.json['move'])
     
     return ""
