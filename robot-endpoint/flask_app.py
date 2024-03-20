@@ -26,9 +26,6 @@ def add_cors_headers(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
-arm_state = ArmState()
-
-
 
 @app.post('/liveness')
 def liveness_probe():
@@ -49,7 +46,6 @@ def change_arm():
     # If debug mode is not on, select active motor
     if not app.config.get('debug'):
         arm.set_active_motor(request.json['arm'])
-        arm_state.set_motor_angle(request.json['arm'], arm.read_servo_angle(request.json['arm']))
     
     print(arm_state.get_motor_angle(request.json['arm']))
     return {"currentAngle": arm_state.get_motor_angle(request.json['arm'])}
@@ -64,7 +60,5 @@ def change_slider():
     # If debug mode is not on, instruct the robotic arm to move
     if not app.config.get('debug'):
         arm.move(request.json['move'])
-    else:
-        arm_state.set_motor_angle(request.json['move'])
     
     return ""
