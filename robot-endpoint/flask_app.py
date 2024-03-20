@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 app.logger.setLevel(logging.DEBUG)
 
+
 def cors_preflight_response():
     headers = {'Access-Control-Allow-Headers': 'Content-Type, Authorization',
                'Access-Control-Allow-Methods': 'POST'}
