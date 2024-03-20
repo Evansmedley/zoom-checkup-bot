@@ -110,11 +110,11 @@ const Control = () => {
   const sendSliderMessage = () => {
     console.log(
       "new slider fetch: ",
-      `${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`
+      `${armEndpoint}/changeSlider`
     );
     console.log("slider value: ", slider);
 
-    fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
+    fetch(`${armEndpoint}/changeSlider`, {
       method: "POST",
       body: JSON.stringify({
         move: parseInt(slider),
@@ -153,10 +153,10 @@ const Control = () => {
     console.log("new arm endpoint new: ", arm);
     console.log(
       "new fetch: ",
-      `${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`
+      `${armEndpoint}/changeArm`
     );
 
-    fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
+    fetch(`${armEndpoint}/changeArm`, {
       method: "POST",
       body: JSON.stringify({
         arm: parseInt(arm),
