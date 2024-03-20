@@ -84,7 +84,7 @@ const Control = () => {
       },
     }).catch((err) => {
       console.error(err);
-    });
+    })
     setEndpointLatency(`${performance.now() - startTime} ms`);
   };
 
@@ -128,7 +128,9 @@ const Control = () => {
       },
     }).catch((err) => {
       console.error(err);
-    });
+    })
+    .then((response) => response.json())
+    .then((data) => setSlider(data.currentAngle));
     setEndpointLatency(`${performance.now() - startTime} ms`)
   };
   const armRef = useRef(sendArmMessage);

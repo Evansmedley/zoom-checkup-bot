@@ -1,5 +1,6 @@
 import logging
-from flask import Flask, request
+from flask import Flask, request, jsonify, Response
+from arm_state import ArmState
 
 arm = None
 
@@ -51,8 +52,7 @@ def change_arm():
         arm_state.set_motor_angle(request.json['arm'], arm.read_servo_angle(request.json['arm']))
     
     print(arm_state.get_motor_angle(request.json['arm']))
-    return {'currentAngle': arm_state.get_motor_angle(request.json['arm'])}
-        
+    return {"currentAngle": arm_state.get_motor_angle(request.json['arm'])}
 
 @app.route('/changeSlider', methods=['POST', 'OPTIONS'])
 def change_slider():
