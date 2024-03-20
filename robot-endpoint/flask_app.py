@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 app.logger.setLevel(logging.DEBUG)
 
+
 def cors_preflight_response():
     headers = {'Access-Control-Allow-Headers': 'Content-Type, Authorization',
                'Access-Control-Allow-Methods': 'POST'}
@@ -23,6 +24,9 @@ def cors_preflight_response():
 def add_cors_headers(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
+
+arm_state = ArmState()
+
 
 
 @app.post('/liveness')
@@ -44,8 +48,10 @@ def change_arm():
     # If debug mode is not on, select active motor
     if not app.config.get('debug'):
         arm.set_active_motor(request.json['arm'])
+        arm_state.set_motor_angle(request.json['arm'], arm.read_servo_angle(request.json['arm']))
     
-    return ""
+    print(arm_state.get_motor_angle(request.json['arm']))
+    return {'currentAngle': arm_state.get_motor_angle(request.json['arm'])}
         
 
 @app.route('/changeSlider', methods=['POST', 'OPTIONS'])
@@ -58,5 +64,7 @@ def change_slider():
     # If debug mode is not on, instruct the robotic arm to move
     if not app.config.get('debug'):
         arm.move(request.json['move'])
+    else:
+        arm_state.set_motor_angle(request.json['move'])
     
     return ""
