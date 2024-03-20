@@ -91,7 +91,7 @@ const Control = () => {
         },
       }).catch((err) => {
         console.error(err);
-      });
+      })
     }, 100)
   );
 
