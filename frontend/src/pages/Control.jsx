@@ -71,7 +71,8 @@ const Control = () => {
       `${armEndpoint}/changeSlider`
     );
     console.log("slider value: ", slider);
-
+    
+    let startTime = performance.now();
     fetch(`${armEndpoint}/changeSlider`, {
       method: "POST",
       body: JSON.stringify({
@@ -84,6 +85,7 @@ const Control = () => {
     }).catch((err) => {
       console.error(err);
     });
+    setEndpointLatency(`${performance.now() - startTime} ms`);
   };
 
   const sliderRef = useRef(sendSliderMessage);
@@ -97,7 +99,7 @@ const Control = () => {
       const func = () => {
         sliderRef.current?.();
       };
-      return debounce(func, 100);
+      return debounce(func, 50);
     }, []);
 
     return debouncedCallback;
@@ -114,6 +116,7 @@ const Control = () => {
       `${armEndpoint}/changeArm`
     );
 
+    let startTime = performance.now();
     fetch(`${armEndpoint}/changeArm`, {
       method: "POST",
       body: JSON.stringify({
@@ -126,6 +129,7 @@ const Control = () => {
     }).catch((err) => {
       console.error(err);
     });
+    setEndpointLatency(`${performance.now() - startTime} ms`)
   };
   const armRef = useRef(sendArmMessage);
 
@@ -138,7 +142,7 @@ const Control = () => {
       const func = () => {
         armRef.current?.();
       };
-      return debounce(func, 100);
+      return debounce(func, 50);
     }, []);
 
     return debouncedCallback;
