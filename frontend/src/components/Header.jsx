@@ -42,6 +42,7 @@ const Header = ({ login }) => {
               href="/control"
               color="headerColor"
               size="large"
+              id="login-button"
             >
               Control
             </Button>

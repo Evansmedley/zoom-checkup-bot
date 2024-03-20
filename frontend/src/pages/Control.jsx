@@ -2,7 +2,7 @@ import Slider from "@mui/material/Slider";
 import * as React from "react";
 import Button from "@mui/joy/Button";
 import ToggleButtonGroup from "@mui/joy/ToggleButtonGroup";
-import { Icon, ListItemText, TextField } from "@mui/material";
+import { ListItemText, TextField } from "@mui/material";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,6 +15,7 @@ import Header from "../components/Header";
 import debounce from "lodash/debounce";
 import { useRef } from "react";
 import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
+import { useMemo } from "react";
 
 const Control = () => {
   const download = () => {
@@ -57,47 +58,93 @@ const Control = () => {
     }
   }, []);
 
-  const debounceSlider = useRef(
-    debounce((newValue) => {
-      console.log("Changed value:", newValue);
 
-      let startTime = performance.now();
-      fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          move: parseInt(newValue),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setEndpointLatency(`${performance.now() - startTime} ms`);
-    }, 100)
-  );
+  useEffect(() => {
+    console.log("rerender: ", armEndpoint);
+  }, [armEndpoint]);
 
-  const debounceArm = useRef(
-    debounce((newValue) => {
-      console.log("Changed arm:", newValue);
+  // ----------------SLIDER DEBOUNCE-------------------
 
-      let startTime = performance.now();
-      fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
-        method: "POST",
-        body: JSON.stringify({
-          arm: parseInt(newValue),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }).catch((err) => {
-        console.error(err);
-      });
-      setEndpointLatency(`${performance.now() - startTime} ms`);
-    }, 100)
-  );
+  const sendSliderMessage = () => {
+    console.log(
+      "new slider fetch: ",
+      `${armEndpoint}/changeSlider`
+    );
+    console.log("slider value: ", slider);
+
+    fetch(`${armEndpoint}/changeSlider`, {
+      method: "POST",
+      body: JSON.stringify({
+        move: parseInt(slider),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+  };
+
+  const sliderRef = useRef(sendSliderMessage);
+
+  useEffect(() => {
+    sliderRef.current = sendSliderMessage;
+  }, [armEndpoint, slider]);
+
+  const useSliderDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        sliderRef.current?.();
+      };
+      return debounce(func, 100);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newSliderDebounce = useSliderDebounce(sendSliderMessage);
+
+  // ----------------ARM DEBOUNCE-------------------
+
+  const sendArmMessage = () => {
+    console.log("new arm endpoint new: ", arm);
+    console.log(
+      "new fetch: ",
+      `${armEndpoint}/changeArm`
+    );
+
+    fetch(`${armEndpoint}/changeArm`, {
+      method: "POST",
+      body: JSON.stringify({
+        arm: parseInt(arm),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+  };
+  const armRef = useRef(sendArmMessage);
+
+  useEffect(() => {
+    armRef.current = sendArmMessage;
+  }, [armEndpoint, arm]);
+
+  const useArmDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        armRef.current?.();
+      };
+      return debounce(func, 100);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newArmDebounce = useArmDebounce(sendArmMessage);
 
   const getEndpoints = () => {
     fetch("http://localhost:8080/endpoint", {
@@ -146,15 +193,18 @@ const Control = () => {
 
   const handleChangeArm = (event, newValue) => {
     if (newValue != null) {
+      console.log("in pre: ", armEndpoint);
       setArm(newValue);
       handleLabel(newValue);
-      debounceArm.current?.(newValue);
+      newArmDebounce();
+      // debounceArm.current?.(newValue, armEndpoint);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
     setSlider(newValue);
-    debounceSlider.current?.(newValue);
+    newSliderDebounce();
+    // debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
