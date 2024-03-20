@@ -1,5 +1,6 @@
 import logging
-from flask import Flask, request
+from flask import Flask, request, jsonify, Response
+from arm_state import ArmState
 
 arm = None
 
@@ -12,6 +13,8 @@ except:
 app = Flask(__name__)
 
 app.logger.setLevel(logging.DEBUG)
+
+arm_state = ArmState()
 
 
 def cors_preflight_response():
@@ -46,8 +49,8 @@ def change_arm():
     if not app.config.get('debug'):
         arm.set_active_motor(request.json['arm'])
     
-    return ""
-        
+    print(arm_state.get_motor_angle(request.json['arm']))
+    return {"currentAngle": arm_state.get_motor_angle(request.json['arm'])}
 
 @app.route('/changeSlider', methods=['POST', 'OPTIONS'])
 def change_slider():
@@ -59,5 +62,7 @@ def change_slider():
     # If debug mode is not on, instruct the robotic arm to move
     if not app.config.get('debug'):
         arm.move(request.json['move'])
+    else:
+        arm_state.set_motor_angle(request.json['move'])
     
     return ""
