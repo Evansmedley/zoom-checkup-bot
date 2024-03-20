@@ -46,7 +46,15 @@
 
 from Arm_Lib import Arm_Device
 import numpy as np
+import argparse
+import sys
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--all_angles", help="The angle for each joint", default='90 90 90 90 90 0', type=str)
+args = parser.parse_args()
+
+angles_str = str(args.all_angles).split(' ')
+angles = list(map(int, angles_str))
 arm = Arm_Device()
 
 # Lengths of each link
@@ -58,7 +66,7 @@ l4 = 0.07385 # servo 4 to servo 5
 l5 = 0.05457 # servo 5 to gripper
 
 # Angles in degrees (90, 90, 90, 90, 90, 0)
-angles = [90, 90, 90, 90, 90, 0]
+# angles = [90, 90, 90, 90, 90, 0]
 theta = np.radians(angles)
 
 # Forward kinematics function
