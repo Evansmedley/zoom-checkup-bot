@@ -58,52 +58,10 @@ const Control = () => {
     }
   }, []);
 
+
   useEffect(() => {
     console.log("rerender: ", armEndpoint);
   }, [armEndpoint]);
-
-  // const debounceSlider = useRef(
-  //   debounce((newValue) => {
-  //     console.log("Changed value:", newValue);
-  //     console.log(
-  //       "slider hitting: ",
-  //       `${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`
-  //     );
-
-  //     fetch(`${armEndpoint}/changeSlider/${selectRobotEndpointObject.uuid}`, {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         move: parseInt(newValue),
-  //       }),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${getAuthToken()}`,
-  //       },
-  //     }).catch((err) => {
-  //       console.error(err);
-  //     });
-  //   }, 100)
-  // );
-
-  // const debounceArm = useRef(
-  //   debounce((newValue, curArmEndpoint) => {
-  //     console.log("Changed arm:", newValue);
-  //     console.log("arm hitting: ", curArmEndpoint);
-
-  //     fetch(`${armEndpoint}/changeArm/${selectRobotEndpointObject.uuid}`, {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         arm: parseInt(newValue),
-  //       }),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${getAuthToken()}`,
-  //       },
-  //     }).catch((err) => {
-  //       console.error(err);
-  //     });
-  //   }, 100)
-  // );
 
   // ----------------SLIDER DEBOUNCE-------------------
 
@@ -251,6 +209,8 @@ const Control = () => {
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    console.log(event.target.value)
+    setEndpointLatencyDisabled(false)
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
     setArmEndpoint(
       "http://" + event.target.value.ip + ":" + event.target.value.port
@@ -272,6 +232,9 @@ const Control = () => {
       return "Inactive";
     }
   };
+
+  const [endpointLatency, setEndpointLatency] = useState("-");
+  const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
 
   return (
     <div>
@@ -380,6 +343,18 @@ const Control = () => {
               ))}
             </Select>
           </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
+              color="success"
+              InputProps={{readOnly: true}}
+              style={{ width: '50%', margin: 'auto'}}
+            />
         </div>
       </div>
     </div>
