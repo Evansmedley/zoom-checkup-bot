@@ -16,6 +16,7 @@ import debounce from "lodash/debounce";
 import { useRef } from "react";
 import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 import { useMemo } from "react";
+import ZoomMtgEmbedded from '@zoom/meetingsdk/embedded';
 
 const Control = () => {
   const download = () => {
@@ -235,6 +236,56 @@ const Control = () => {
 
   const [endpointLatency, setEndpointLatency] = useState("-");
   const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
+
+  // ----------------ZOOM INTEGRATION-------------------
+
+  const client = ZoomMtgEmbedded.createClient();
+
+  const authEndpoint = "https://sysc-zoom-auth-server-3b591ca480f6.herokuapp.com/"
+  const sdkKey = '97zkC6mhQXmbHVHgAe9yw'
+  const meetingNumber = '88958472494'
+  const passWord = '0mi3ck'
+  const userName = 'Doctor'
+
+  function getSignature(e) {
+    e.preventDefault();
+
+    fetch(authEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meetingNumber: meetingNumber,
+        role: 0
+      })
+    }).then(res => res.json())
+    .then(response => {
+      startMeeting(response.signature)
+    }).catch(error => {
+      console.error(error)
+    })
+  }
+
+  function startMeeting(signature) {
+
+    let meetingSDKElement = document.getElementById('meetingSDKElement');
+
+    client.init({zoomAppRoot: meetingSDKElement, language: 'en-US', patchJsMedia: true}).then(() => {
+      client.join({
+        signature: signature,
+        sdkKey: sdkKey,
+        meetingNumber: meetingNumber,
+        password: passWord,
+        userName: userName,
+        userEmail: ''
+      }).then(() => {
+        console.log('joined successfully')
+      }).catch((error) => {
+        console.log(error)
+      })
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 
   return (
     <div>
