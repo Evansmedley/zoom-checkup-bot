@@ -251,7 +251,8 @@ const Control = () => {
   function getZoomData(event) {
     fetch("http://localhost:8080/zoom", {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
-    }).then((response) => response.json())
+    })
+      .then((response) => response.json())
       .then((data) => getSignature(event, data));
   }
 
@@ -400,7 +401,7 @@ const Control = () => {
           </div>
           <div className="endpoint-row">
             <FormControl size="small" className="drop-down">
-              <InputLabel id="demo-simple-select-helper-label" color="primary">
+              <InputLabel id="demo-simple-select-helper-label" color="success">
                 Endpoint
               </InputLabel>
               <Select
@@ -409,7 +410,7 @@ const Control = () => {
                 label="Endpoint"
                 onChange={handleRobotEndpoint}
                 onOpen={getEndpoints}
-                color="primary"
+                color="success"
               >
                 {allRobotEndpoints.map((robotEndpointOption) => (
                   <MenuItem
