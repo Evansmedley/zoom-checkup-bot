@@ -16,6 +16,11 @@ import debounce from "lodash/debounce";
 import { useRef } from "react";
 import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 import { useMemo } from "react";
+import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const Control = () => {
   const download = () => {
@@ -37,6 +42,7 @@ const Control = () => {
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
+  const [isActiveEndpoint, setIsActiveEndpoint] = useState(false);
   const [streamURL, setStreamURL] = useState("");
   const [armEndpoint, setArmEndpoint] = useState("");
 
@@ -57,21 +63,12 @@ const Control = () => {
       handleChangeArm(null, "1");
     }
   }, []);
-
-
-  useEffect(() => {
-    console.log("rerender: ", armEndpoint);
-  }, [armEndpoint]);
-
   // ----------------SLIDER DEBOUNCE-------------------
 
   const sendSliderMessage = () => {
-    console.log(
-      "new slider fetch: ",
-      `${armEndpoint}/changeSlider`
-    );
+    console.log("new slider fetch: ", `${armEndpoint}/changeSlider`);
     console.log("slider value: ", slider);
-    
+
     let startTime = performance.now();
     fetch(`${armEndpoint}/changeSlider`, {
       method: "POST",
@@ -84,7 +81,7 @@ const Control = () => {
       },
     }).catch((err) => {
       console.error(err);
-    })
+    });
     setEndpointLatency(`${performance.now() - startTime} ms`);
   };
 
@@ -111,10 +108,7 @@ const Control = () => {
 
   const sendArmMessage = () => {
     console.log("new arm endpoint new: ", arm);
-    console.log(
-      "new fetch: ",
-      `${armEndpoint}/changeArm`
-    );
+    console.log("new fetch: ", `${armEndpoint}/changeArm`);
 
     let startTime = performance.now();
     fetch(`${armEndpoint}/changeArm`, {
@@ -126,12 +120,13 @@ const Control = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getAuthToken()}`,
       },
-    }).catch((err) => {
-      console.error(err);
     })
-    .then((response) => response.json())
-    .then((data) => setSlider(data.currentAngle));
-    setEndpointLatency(`${performance.now() - startTime} ms`)
+      .catch((err) => {
+        console.error(err);
+      })
+      .then((response) => response.json())
+      .then((data) => setSlider(data.currentAngle));
+    setEndpointLatency(`${performance.now() - startTime} ms`);
   };
   const armRef = useRef(sendArmMessage);
 
@@ -203,20 +198,19 @@ const Control = () => {
       setArm(newValue);
       handleLabel(newValue);
       newArmDebounce();
-      // debounceArm.current?.(newValue, armEndpoint);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
     setSlider(newValue);
     newSliderDebounce();
-    // debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
-    console.log(event.target.value)
-    setEndpointLatencyDisabled(false)
+    setIsActiveEndpoint(event.target.value.active);
+    console.log(event.target.value);
+    setEndpointLatencyDisabled(false);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
     setArmEndpoint(
       "http://" + event.target.value.ip + ":" + event.target.value.port
@@ -242,15 +236,121 @@ const Control = () => {
   const [endpointLatency, setEndpointLatency] = useState("-");
   const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
 
+  // ----------------ZOOM INTEGRATION-------------------
+
+  const client = ZoomMtgEmbedded.createClient();
+
+  const userName = "Doctor";
+  const [zoomStarted, setZoomStarted] = useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
+  const [zoomMeetingNumber, setZoomMeetingNumber] = useState("");
+  const [zoomMeetingPasscode, setZoomMeetingPasscode] = useState("");
+
+  function getZoomData(event) {
+    fetch("http://localhost:8080/zoom", {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    })
+      .then((response) => response.json())
+      .then((data) => getSignature(event, data));
+  }
+
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const handleKeyPressEnter = (event) => {
+    if (event.key === "Enter") {
+      getSignature();
+    }
+  };
+
+  function getSignature(e, data) {
+    e.preventDefault();
+
+    fetch(data.authEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meetingNumber: zoomMeetingNumber,
+        role: 0,
+      }),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        startMeeting(response.signature, data.sdkKey);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  function startMeeting(signature, sdkKey) {
+    let meetingSDKElement = document.getElementById("meetingSDKElement");
+    setZoomStarted(true);
+    client
+      .init({
+        zoomAppRoot: meetingSDKElement,
+        language: "en-US",
+        patchJsMedia: true,
+        customize: {
+          video: {
+            isResizable: true,
+            viewSizes: {
+              default: {
+                width: 600,
+                height: 450,
+              },
+              ribbon: {
+                width: 600,
+                height: 450,
+              },
+            },
+          },
+        },
+      })
+      .then(() => {
+        client
+          .join({
+            signature: signature,
+            sdkKey: sdkKey,
+            meetingNumber: zoomMeetingNumber,
+            password: zoomMeetingPasscode,
+            userName: userName,
+            userEmail: "",
+          })
+          .then(() => {
+            console.log("joined successfully");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  // ----------------HTML-------------------
+
   return (
     <div>
       <Header login={true} />
       <div className="main">
-        <div className="column">
+        <div className="column left-column">
           {!streamURL && (
             <div className="no-stream-view">
               <NoPhotographyIcon></NoPhotographyIcon>
-              <p>Please choose an endpoint</p>
+              <p id="no-stream-blurb">Please choose an endpoint</p>
             </div>
           )}
 
@@ -265,6 +365,11 @@ const Control = () => {
               size="md"
               spacing={1}
               defaultValue="1"
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+              disabled={!streamURL || !isActiveEndpoint}
             >
               <Button value="1">1</Button>
               <Button value="2">2</Button>
@@ -275,7 +380,6 @@ const Control = () => {
             </ToggleButtonGroup>
 
             <Slider
-              aria-label="Default"
               valueLabelDisplay="on"
               value={slider}
               onChange={handleChangeSlider}
@@ -284,22 +388,134 @@ const Control = () => {
               defaultValue={0}
               max={rangeMax}
               min={0}
+              sx={{
+                ".css-1eoe787-MuiSlider-markLabel": {
+                  transform: "translateX(0)",
+                },
+                ".css-yafthl-MuiSlider-markLabel": {
+                  transform: "translateX(-100%)",
+                },
+              }}
+              disabled={!streamURL || !isActiveEndpoint}
+            />
+          </div>
+          <div className="endpoint-row">
+            <FormControl size="small" className="drop-down">
+              <InputLabel id="demo-simple-select-helper-label" color="success">
+                Endpoint
+              </InputLabel>
+              <Select
+                className="endpoint-option"
+                value={selectRobotEndpointObject.name}
+                label="Endpoint"
+                onChange={handleRobotEndpoint}
+                onOpen={getEndpoints}
+                color="success"
+              >
+                {allRobotEndpoints.map((robotEndpointOption) => (
+                  <MenuItem
+                    className="endpoint-option"
+                    key={robotEndpointOption.uuid}
+                    value={robotEndpointOption}
+                  >
+                    <Chip
+                      small="small"
+                      label={getStatusLabel(robotEndpointOption.active)}
+                      color={getStatusColour(robotEndpointOption.active)}
+                      size="small"
+                    />
+                    <ListItemText primary={robotEndpointOption.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
+              color="success"
+              InputProps={{ readOnly: true }}
+              style={{ width: "50%", margin: "auto" }}
             />
           </div>
         </div>
 
-        <div className="column right">
+        <div className="column right-column">
+          {!zoomStarted && (
+            <div className="no-stream-view">
+              <Button
+                color="success"
+                onClick={handleModalOpen}
+                disabled={!streamURL || !isActiveEndpoint}
+              >
+                Enter Zoom Meeting Credentials
+              </Button>
+              <Modal open={openModal} onClose={handleModalClose}>
+                <Box sx={modalStyle} className="modal-zoom-login">
+                  <Typography id="modal-zoom-title" variant="h6" component="h2">
+                    Zoom Meeting
+                  </Typography>
+                  <div id="form">
+                    <FormControl fullWidth required>
+                      <InputLabel htmlFor="meetingNumber">
+                        Zoom Meeting Number
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingNumber"
+                        label="Zoom Meeting Number"
+                        onChange={(e) => setZoomMeetingNumber(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl fullWidth required variant="outlined">
+                      <InputLabel htmlFor="meetingPasscode">
+                        Zoom Meeting Passcode
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingPasscode"
+                        label="Zoom Meeting Passcode"
+                        onChange={(e) => setZoomMeetingPasscode(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <Button
+                        className="saveBtn"
+                        onClick={getZoomData}
+                        variant="soft"
+                        size="md"
+                        color="success"
+                      >
+                        Start Zoom
+                      </Button>
+                    </FormControl>
+                  </div>{" "}
+                </Box>
+              </Modal>
+            </div>
+          )}
+
+          <div id="meetingSDKElement">
+            {/* Zoom Meeting SDK Component View Rendered Here */}
+          </div>
+
           <TextField
             id="notes"
             label="Notes"
             multiline
-            rows={12}
-            fullWidth
+            rows={5}
             download="final_notes"
             variant="outlined"
             color="success"
             min={0}
             max={180}
+            style={{ width: "100%" }}
           />
           <div className="save">
             <Input
@@ -320,47 +536,6 @@ const Control = () => {
               Download
             </Button>
           </div>
-          <FormControl size="small" className="drop-down">
-            <InputLabel id="demo-simple-select-helper-label" color="primary">
-              Endpoint
-            </InputLabel>
-            <Select
-              className="endpoint-option"
-              value={selectRobotEndpointObject.name}
-              label="Endpoint"
-              onChange={handleRobotEndpoint}
-              onOpen={getEndpoints}
-              color="primary"
-            >
-              {allRobotEndpoints.map((robotEndpointOption) => (
-                <MenuItem
-                  className="endpoint-option"
-                  key={robotEndpointOption.uuid}
-                  value={robotEndpointOption}
-                >
-                  <Chip
-                    small="small"
-                    label={getStatusLabel(robotEndpointOption.active)}
-                    color={getStatusColour(robotEndpointOption.active)}
-                    size="small"
-                  />
-                  <ListItemText primary={robotEndpointOption.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-            <TextField
-              disabled={endpointLatencyDisabled}
-              size="small"
-              id="endpoint-latency"
-              label="Endpoint Latency"
-              defaultValue="-"
-              value={endpointLatency}
-              variant="outlined"
-              color="success"
-              InputProps={{readOnly: true}}
-              style={{ width: '50%', margin: 'auto'}}
-            />
         </div>
       </div>
     </div>

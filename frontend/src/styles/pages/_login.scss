@@ -55,16 +55,21 @@
     left: 57%;
     top: 0.5rem;
     z-index: 2;
-    border-radius: 20rem;
     background: #258C22;
-    width: 20rem;
-    height: 20rem;
+    border-radius: 50vh;
+    width: 50vh;
+    height: 50vh;
+    // border-radius: 20rem;
+    // width: 20rem;
+    // height: 20rem;
 }
 
 .small-rec {
     position: absolute;
-    width: 20rem;
-    height: 20rem;
+    // width: 20rem;
+    // height: 20rem;
+    width: 50vh;
+    height: 50vh;
     left: 23%;
     top: 50%;
     z-index: 1;
