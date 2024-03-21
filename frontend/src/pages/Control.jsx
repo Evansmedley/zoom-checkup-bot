@@ -148,7 +148,7 @@ const Control = () => {
   const newArmDebounce = useArmDebounce(sendArmMessage);
 
   const getEndpoints = () => {
-    fetch("http://localhost:8080/endpoint", {
+    fetch(`${process.env.REACT_APP_HOSTNAME}/endpoint`, {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     })
       .then((response) => response.json())

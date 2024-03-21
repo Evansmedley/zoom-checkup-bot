@@ -2,6 +2,7 @@ package com.checkupbot.checkupbotbackend.controllers;
 
 import com.checkupbot.checkupbotbackend.documents.RoboticArmEndpoint;
 import com.checkupbot.checkupbotbackend.repositories.RoboticArmEndpointRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,13 @@ public class RoboticArmEndpointRegistrationController {
     }
 
     @PostMapping(value = "/register")
-    public RoboticArmEndpoint registerRoboticArmEndpoint(@RequestBody RoboticArmEndpoint newEndpoint) {
+    public RoboticArmEndpoint registerRoboticArmEndpoint(@RequestBody RoboticArmEndpoint newEndpoint, HttpServletRequest request) {
+        logger.info(request.getRemoteAddr());
+        logger.info(request.getRemoteHost());
         logger.info("Received Request: REGISTER ROBOTIC ARM ENDPOINT");
         logger.info(newEndpoint.toString());
+
+
 
         for (RoboticArmEndpoint existingEndpoint : roboticArmEndpointRepository.findAll()) {
             if (existingEndpoint.getUri().equals(newEndpoint.getUri())) {
