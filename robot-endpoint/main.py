@@ -17,6 +17,8 @@ def get_args():
                         help='Debug mode -> print events rather than actually controlling the robotic arm')
     parser.add_argument('-l', '--local', action='store_true', 
                         help='Local mode -> for running endpoint on same network as server, uses internal ip instead of external ip')
+    parser.add_argument('-u', '--uri', action='store', type=str, required=False, default=None,
+                        help='Endpoint hostname for cloud deployed endpoints')
     
     args = parser.parse_args()
     
@@ -29,10 +31,11 @@ if __name__ == '__main__':
     
     # Send a POST request to the server to register
     http_client = HTTPClient(args.name)
-    uuid = http_client.register(args.server, args.listen_port, args.local)
+    uuid = http_client.register(args.server, args.listen_port, args.uri, args.local)
 
     # Start camera streaming
-    camera_process = subprocess.Popen(['python3', 'stream_camera.py'])
+    if not args.debug:
+        camera_process = subprocess.Popen(['python3', 'stream_camera.py'])
     
     app.config['name'], app.config['uuid'], app.config['debug'] = \
                     args.name, uuid, args.debug
