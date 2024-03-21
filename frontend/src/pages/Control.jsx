@@ -58,7 +58,6 @@ const Control = () => {
     }
   }, []);
 
-
   useEffect(() => {
     console.log("rerender: ", armEndpoint);
   }, [armEndpoint]);
@@ -66,12 +65,9 @@ const Control = () => {
   // ----------------SLIDER DEBOUNCE-------------------
 
   const sendSliderMessage = () => {
-    console.log(
-      "new slider fetch: ",
-      `${armEndpoint}/changeSlider`
-    );
+    console.log("new slider fetch: ", `${armEndpoint}/changeSlider`);
     console.log("slider value: ", slider);
-    
+
     let startTime = performance.now();
     fetch(`${armEndpoint}/changeSlider`, {
       method: "POST",
@@ -84,7 +80,7 @@ const Control = () => {
       },
     }).catch((err) => {
       console.error(err);
-    })
+    });
     setEndpointLatency(`${performance.now() - startTime} ms`);
   };
 
@@ -111,10 +107,7 @@ const Control = () => {
 
   const sendArmMessage = () => {
     console.log("new arm endpoint new: ", arm);
-    console.log(
-      "new fetch: ",
-      `${armEndpoint}/changeArm`
-    );
+    console.log("new fetch: ", `${armEndpoint}/changeArm`);
 
     let startTime = performance.now();
     fetch(`${armEndpoint}/changeArm`, {
@@ -126,12 +119,13 @@ const Control = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getAuthToken()}`,
       },
-    }).catch((err) => {
-      console.error(err);
     })
-    .then((response) => response.json())
-    .then((data) => setSlider(data.currentAngle));
-    setEndpointLatency(`${performance.now() - startTime} ms`)
+      .catch((err) => {
+        console.error(err);
+      })
+      .then((response) => response.json())
+      .then((data) => setSlider(data.currentAngle));
+    setEndpointLatency(`${performance.now() - startTime} ms`);
   };
   const armRef = useRef(sendArmMessage);
 
@@ -215,8 +209,8 @@ const Control = () => {
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
-    console.log(event.target.value)
-    setEndpointLatencyDisabled(false)
+    console.log(event.target.value);
+    setEndpointLatencyDisabled(false);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
     setArmEndpoint(
       "http://" + event.target.value.ip + ":" + event.target.value.port
@@ -265,6 +259,10 @@ const Control = () => {
               size="md"
               spacing={1}
               defaultValue="1"
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
             >
               <Button value="1">1</Button>
               <Button value="2">2</Button>
@@ -284,6 +282,14 @@ const Control = () => {
               defaultValue={0}
               max={rangeMax}
               min={0}
+              sx={{
+                ".css-1eoe787-MuiSlider-markLabel": {
+                  transform: "translateX(0)",
+                },
+                ".css-yafthl-MuiSlider-markLabel": {
+                  transform: "translateX(-100%)",
+                },
+              }}
             />
           </div>
         </div>
@@ -349,18 +355,18 @@ const Control = () => {
               ))}
             </Select>
           </FormControl>
-            <TextField
-              disabled={endpointLatencyDisabled}
-              size="small"
-              id="endpoint-latency"
-              label="Endpoint Latency"
-              defaultValue="-"
-              value={endpointLatency}
-              variant="outlined"
-              color="success"
-              InputProps={{readOnly: true}}
-              style={{ width: '50%', margin: 'auto'}}
-            />
+          <TextField
+            disabled={endpointLatencyDisabled}
+            size="small"
+            id="endpoint-latency"
+            label="Endpoint Latency"
+            defaultValue="-"
+            value={endpointLatency}
+            variant="outlined"
+            color="success"
+            InputProps={{ readOnly: true }}
+            style={{ width: "50%", margin: "auto" }}
+          />
         </div>
       </div>
     </div>

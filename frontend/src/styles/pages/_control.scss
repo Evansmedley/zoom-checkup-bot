@@ -12,6 +12,7 @@
 .column {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   flex: 50%;
 }
 
@@ -22,20 +23,22 @@
 }
 
 .controls {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    // flex-direction: column;
     justify-items: center;
-    width: 85%;
-    padding-left: 2rem;
+    // justify-content: center;
+    justify-self: center;
 }
 
 .arm-buttons {
     position: relative;
     padding-bottom: 2rem;
-    padding-left: 8rem;
     padding-top: 10px;
     padding-bottom: 40px;
 }
+
+
+
 
 
 .save{
@@ -64,10 +67,18 @@
 }
 
 .no-stream-view {
-  width: 38rem;
-  height: 28rem;
+  width: 100%;
+  height: 100%;
   background-color: lightgray;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media (max-width: 700px) {
+  .main {   
+    flex-direction: column;
+  }
 }
