@@ -12,6 +12,10 @@ import Chip from "@mui/material/Chip";
 import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
+import debounce from "lodash/debounce";
+import { useRef } from "react";
+import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
+import { useMemo } from "react";
 
 const Control = () => {
   const download = () => {
@@ -27,12 +31,14 @@ const Control = () => {
   const [arm, setArm] = useState("1");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
+  const [rangeMax, setRangeMax] = useState(180);
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
   const [streamURL, setStreamURL] = useState("");
+  const [armEndpoint, setArmEndpoint] = useState("");
 
   const marks = [
     {
@@ -40,20 +46,111 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 180,
+      value: rangeMax,
       label: rightLabel,
     },
   ];
 
   useEffect(() => {
+    getEndpoints();
     if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
-  }, [selectRobotEndpointObject]);
+  }, []);
+
 
   useEffect(() => {
-    getEndpoints();
-  }, []);
+    console.log("rerender: ", armEndpoint);
+  }, [armEndpoint]);
+
+  // ----------------SLIDER DEBOUNCE-------------------
+
+  const sendSliderMessage = () => {
+    console.log(
+      "new slider fetch: ",
+      `${armEndpoint}/changeSlider`
+    );
+    console.log("slider value: ", slider);
+    
+    let startTime = performance.now();
+    fetch(`${armEndpoint}/changeSlider`, {
+      method: "POST",
+      body: JSON.stringify({
+        move: parseInt(slider),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
+      console.error(err);
+    })
+    setEndpointLatency(`${performance.now() - startTime} ms`);
+  };
+
+  const sliderRef = useRef(sendSliderMessage);
+
+  useEffect(() => {
+    sliderRef.current = sendSliderMessage;
+  }, [armEndpoint, slider]);
+
+  const useSliderDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        sliderRef.current?.();
+      };
+      return debounce(func, 50);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newSliderDebounce = useSliderDebounce(sendSliderMessage);
+
+  // ----------------ARM DEBOUNCE-------------------
+
+  const sendArmMessage = () => {
+    console.log("new arm endpoint new: ", arm);
+    console.log(
+      "new fetch: ",
+      `${armEndpoint}/changeArm`
+    );
+
+    let startTime = performance.now();
+    fetch(`${armEndpoint}/changeArm`, {
+      method: "POST",
+      body: JSON.stringify({
+        arm: parseInt(arm),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
+      console.error(err);
+    })
+    .then((response) => response.json())
+    .then((data) => setSlider(data.currentAngle));
+    setEndpointLatency(`${performance.now() - startTime} ms`)
+  };
+  const armRef = useRef(sendArmMessage);
+
+  useEffect(() => {
+    armRef.current = sendArmMessage;
+  }, [armEndpoint, arm]);
+
+  const useArmDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        armRef.current?.();
+      };
+      return debounce(func, 50);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newArmDebounce = useArmDebounce(sendArmMessage);
 
   const getEndpoints = () => {
     fetch(`${process.env.REACT_APP_HOSTNAME}/endpoint`, {
@@ -64,65 +161,66 @@ const Control = () => {
   };
 
   const handleLabel = (newArm) => {
-    if (newArm === "1") {
-      setLeftLabel("Left");
-      setRightLabel("Right");
-    } else if (newArm === "5") {
-      setLeftLabel("Counter");
-      setRightLabel("Clockwise");
-    } else if (newArm === "6") {
-      setLeftLabel("Close");
-      setRightLabel("Open");
-    } else if (newArm === "2" || newArm === "3" || newArm === "4") {
-      setLeftLabel("Down");
-      setRightLabel("Up");
+    switch (newArm) {
+      case "1":
+        setLeftLabel("Left");
+        setRightLabel("Right");
+        setRangeMax(180);
+        break;
+      case "2":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "3":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "4":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "5":
+        setLeftLabel("Counter-Clockwise");
+        setRightLabel("Clockwise");
+        setRangeMax(270);
+        break;
+      case "6":
+        setLeftLabel("Close");
+        setRightLabel("Open");
+        setRangeMax(180);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleChangeArm = (event, newArm) => {
-    if (newArm != null) {
-      fetch(
-        `http://localhost:8080/changeArm/${selectRobotEndpointObject.uuid}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            arm: parseInt(newArm),
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getAuthToken()}`,
-          },
-        }
-      ).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      handleLabel(newArm);
+  const handleChangeArm = (event, newValue) => {
+    if (newValue != null) {
+      console.log("in pre: ", armEndpoint);
+      setArm(newValue);
+      handleLabel(newValue);
+      newArmDebounce();
+      // debounceArm.current?.(newValue, armEndpoint);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(
-      `http://localhost:8080/changeSlider/${selectRobotEndpointObject.uuid}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          move: parseInt(newValue),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    ).catch((err) => {
-      console.error(err);
-    });
     setSlider(newValue);
+    newSliderDebounce();
+    // debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    console.log(event.target.value)
+    setEndpointLatencyDisabled(false)
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
+    setArmEndpoint(
+      "http://" + event.target.value.ip + ":" + event.target.value.port
+    );
   };
 
   const getStatusColour = (status) => {
@@ -141,49 +239,53 @@ const Control = () => {
     }
   };
 
+  const [endpointLatency, setEndpointLatency] = useState("-");
+  const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
+
   return (
     <div>
       <Header login={true} />
       <div className="main">
         <div className="column">
-          <span>Current arm: {arm}</span>
-          <span>Current state: {slider}</span>
-          {streamURL && (
-            <img
-              id="camera-stream"
-              src={streamURL}
-              alt="Select the Robot in the Endpoint drop-down menu"
-            />
+          {!streamURL && (
+            <div className="no-stream-view">
+              <NoPhotographyIcon></NoPhotographyIcon>
+              <p>Please choose an endpoint</p>
+            </div>
           )}
-          <FormControl size="small" className="drop-down">
-            <InputLabel id="demo-simple-select-helper-label" color="primary">
-              Endpoint
-            </InputLabel>
-            <Select
-              className="endpoint-option"
-              value={selectRobotEndpointObject.name}
-              label="Endpoint"
-              onChange={handleRobotEndpoint}
-              onOpen={getEndpoints}
-              color="primary"
+
+          {streamURL && (
+            <img id="camera-stream" src={streamURL} alt="Stream error" />
+          )}
+          <div className="controls">
+            <ToggleButtonGroup
+              className="arm-buttons"
+              value={arm}
+              onChange={handleChangeArm}
+              size="md"
+              spacing={1}
+              defaultValue="1"
             >
-              {allRobotEndpoints.map((robotEndpointOption) => (
-                <MenuItem
-                  className="endpoint-option"
-                  key={robotEndpointOption.uuid}
-                  value={robotEndpointOption}
-                >
-                  <Chip
-                    small="small"
-                    label={getStatusLabel(robotEndpointOption.active)}
-                    color={getStatusColour(robotEndpointOption.active)}
-                    size="small"
-                  />
-                  <ListItemText primary={robotEndpointOption.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
+            </ToggleButtonGroup>
+
+            <Slider
+              aria-label="Default"
+              valueLabelDisplay="on"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
+              color="success"
+              defaultValue={0}
+              max={rangeMax}
+              min={0}
+            />
+          </div>
         </div>
 
         <div className="column right">
@@ -218,32 +320,47 @@ const Control = () => {
               Download
             </Button>
           </div>
-
-          <div className="arm-controls">
-            <ToggleButtonGroup
-              className="buttonGroup"
-              value={arm}
-              onChange={handleChangeArm}
-              size="md"
-              spacing={1}
+          <FormControl size="small" className="drop-down">
+            <InputLabel id="demo-simple-select-helper-label" color="primary">
+              Endpoint
+            </InputLabel>
+            <Select
+              className="endpoint-option"
+              value={selectRobotEndpointObject.name}
+              label="Endpoint"
+              onChange={handleRobotEndpoint}
+              onOpen={getEndpoints}
+              color="primary"
             >
-              <Button value="1">1</Button>
-              <Button value="2">2</Button>
-              <Button value="3">3</Button>
-              <Button value="4">4</Button>
-              <Button value="5">5</Button>
-              <Button value="6">6</Button>
-            </ToggleButtonGroup>
-
-            <Slider
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              value={slider}
-              onChange={handleChangeSlider}
-              marks={marks}
+              {allRobotEndpoints.map((robotEndpointOption) => (
+                <MenuItem
+                  className="endpoint-option"
+                  key={robotEndpointOption.uuid}
+                  value={robotEndpointOption}
+                >
+                  <Chip
+                    small="small"
+                    label={getStatusLabel(robotEndpointOption.active)}
+                    color={getStatusColour(robotEndpointOption.active)}
+                    size="small"
+                  />
+                  <ListItemText primary={robotEndpointOption.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
               color="success"
+              InputProps={{readOnly: true}}
+              style={{ width: '50%', margin: 'auto'}}
             />
-          </div>
         </div>
       </div>
     </div>
