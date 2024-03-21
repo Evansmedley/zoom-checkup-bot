@@ -243,8 +243,6 @@ const Control = () => {
 
   const client = ZoomMtgEmbedded.createClient();
 
-  const authEndpoint = "http://localhost:4000";
-  const sdkKey = "j5PHD6RKRCq_5FGcfBlHQg";
   const userName = "Doctor";
   const [zoomStarted, setZoomStarted] = useState(false);
   const [openModal, setOpenModal] = React.useState(false);
@@ -252,6 +250,13 @@ const Control = () => {
   const handleModalClose = () => setOpenModal(false);
   const [zoomMeetingNumber, setZoomMeetingNumber] = useState("");
   const [zoomMeetingPasscode, setZoomMeetingPasscode] = useState("");
+
+  function getZoomData(event) {
+    fetch("http://localhost:8080/zoom", {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    }).then((response) => response.json())
+      .then((data) => getSignature(event, data));
+  }
 
   const modalStyle = {
     position: "absolute",
@@ -271,10 +276,10 @@ const Control = () => {
     }
   };
 
-  function getSignature(e) {
+  function getSignature(e, data) {
     e.preventDefault();
 
-    fetch(authEndpoint, {
+    fetch(data.authEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -284,14 +289,14 @@ const Control = () => {
     })
       .then((res) => res.json())
       .then((response) => {
-        startMeeting(response.signature);
+        startMeeting(response.signature, data.sdkKey);
       })
       .catch((error) => {
         console.error(error);
       });
   }
 
-  function startMeeting(signature) {
+  function startMeeting(signature, sdkKey) {
     let meetingSDKElement = document.getElementById("meetingSDKElement");
     setZoomStarted(true);
     client
@@ -485,7 +490,7 @@ const Control = () => {
                     <FormControl>
                       <Button
                         className="saveBtn"
-                        onClick={getSignature}
+                        onClick={getZoomData}
                         variant="soft"
                         size="md"
                         color="success"
