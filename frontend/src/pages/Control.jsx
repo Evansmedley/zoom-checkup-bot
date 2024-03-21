@@ -291,7 +291,7 @@ const Control = () => {
     <div>
       <Header login={true} />
       <div className="main">
-        <div className="column">
+        <div className="column left-column">
           {!streamURL && (
             <div className="no-stream-view">
               <NoPhotographyIcon></NoPhotographyIcon>
@@ -343,40 +343,6 @@ const Control = () => {
               }}
             />
           </div>
-        </div>
-
-        <div className="column right">
-          <TextField
-            id="notes"
-            label="Notes"
-            multiline
-            rows={12}
-            fullWidth
-            download="final_notes"
-            variant="outlined"
-            color="success"
-            min={0}
-            max={180}
-          />
-          <div className="save">
-            <Input
-              required
-              id="filename"
-              className="filename"
-              placeholder="Name"
-              color="success"
-            />
-
-            <Button
-              className="saveBtn"
-              onClick={download}
-              variant="soft"
-              size="md"
-              color="success"
-            >
-              Download
-            </Button>
-          </div>
           <FormControl size="small" className="drop-down">
             <InputLabel id="demo-simple-select-helper-label" color="primary">
               Endpoint
@@ -418,6 +384,44 @@ const Control = () => {
             InputProps={{ readOnly: true }}
             style={{ width: "50%", margin: "auto" }}
           />
+        </div>
+
+        <div className="column right-column">
+          <div className="no-stream-view">
+            <NoPhotographyIcon></NoPhotographyIcon>
+            <p>Please choose an endpoint</p>
+          </div>
+          <TextField
+            id="notes"
+            label="Notes"
+            multiline
+            rows={5}
+            download="final_notes"
+            variant="outlined"
+            color="success"
+            min={0}
+            max={180}
+            style={{ width: "100%" }}
+          />
+          <div className="save">
+            <Input
+              required
+              id="filename"
+              className="filename"
+              placeholder="Name"
+              color="success"
+            />
+
+            <Button
+              className="saveBtn"
+              onClick={download}
+              variant="soft"
+              size="md"
+              color="success"
+            >
+              Download
+            </Button>
+          </div>
         </div>
       </div>
     </div>
