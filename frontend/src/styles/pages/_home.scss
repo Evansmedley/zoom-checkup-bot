@@ -1,9 +1,11 @@
 .robot-pic {
-    position: absolute;
+    position: relative;
     width: 32rem;
     height: 35rem;
     z-index: 5;
     right: 15%;
+    // max-width: 100%;
+    // height: auto;
 }
 
 .bg-square {
@@ -20,7 +22,7 @@
     z-index: 2;
     background: #258C22;
     width: 82rem;
-    height: 1316px;
+    height: 82rem;
     border-radius: 82rem;
     right: 35%;
     top: -30%;
@@ -31,6 +33,7 @@
 
 .page-content {
     display: flex;
+    gap: 10%
 }
 
 .text {

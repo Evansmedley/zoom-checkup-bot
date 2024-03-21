@@ -13,6 +13,7 @@ class Arm():
         self.arm = Arm_Device()
         self.move_bot = self.setup()
         self.active_motor_num = None
+        self.arm
         
         
     def setup(self):
@@ -37,8 +38,10 @@ class Arm():
     def set_active_motor(self, motor_num: int):
         self.active_motor_num = motor_num
     
+    def read_servo_angle(self, motor_num: int):
+        return self.arm.Arm_serial_servo_read(motor_num)
     
-    def cleanup():
+    def cleanup(self):
         del Arm
 
     # NOT SURE WHAT TO DO WITH THIS :)        

@@ -28,20 +28,21 @@ const Header = ({ login }) => {
           >
             Home
           </Button>
-          <Button
+          {/* <Button
             className="App-link"
             href="/contact"
             color="headerColor"
             size="large"
           >
             Contact
-          </Button>
+          </Button> */}
           {login && (
             <Button
               className="App-link"
               href="/control"
               color="headerColor"
               size="large"
+              id="login-button"
             >
               Control
             </Button>
@@ -49,12 +50,7 @@ const Header = ({ login }) => {
         </div>
         <div className="right">
           {!login && (
-            <Button
-              className="App-link right"
-              href="/login"
-              color="headerColor"
-              size="large"
-            >
+            <Button href="/login" color="headerColor" size="large">
               Log In
             </Button>
           )}

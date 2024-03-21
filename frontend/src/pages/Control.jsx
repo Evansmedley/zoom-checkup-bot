@@ -12,6 +12,15 @@ import Chip from "@mui/material/Chip";
 import { useState, useEffect } from "react";
 import { getAuthToken } from "../axios_helper";
 import Header from "../components/Header";
+import debounce from "lodash/debounce";
+import { useRef } from "react";
+import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
+import { useMemo } from "react";
+import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const Control = () => {
   const download = () => {
@@ -27,12 +36,15 @@ const Control = () => {
   const [arm, setArm] = useState("1");
   const [leftLabel, setLeftLabel] = useState("Left");
   const [rightLabel, setRightLabel] = useState("Right");
+  const [rangeMax, setRangeMax] = useState(180);
   const [slider, setSlider] = useState(30);
 
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
+  const [isActiveEndpoint, setIsActiveEndpoint] = useState(false);
   const [streamURL, setStreamURL] = useState("");
+  const [armEndpoint, setArmEndpoint] = useState("");
 
   const marks = [
     {
@@ -40,20 +52,100 @@ const Control = () => {
       label: leftLabel,
     },
     {
-      value: 180,
+      value: rangeMax,
       label: rightLabel,
     },
   ];
 
   useEffect(() => {
+    getEndpoints();
     if (selectRobotEndpointObject.uuid !== undefined) {
       handleChangeArm(null, "1");
     }
-  }, [selectRobotEndpointObject]);
+  }, []);
+  // ----------------SLIDER DEBOUNCE-------------------
+
+  const sendSliderMessage = () => {
+    console.log("new slider fetch: ", `${armEndpoint}/changeSlider`);
+    console.log("slider value: ", slider);
+
+    let startTime = performance.now();
+    fetch(`${armEndpoint}/changeSlider`, {
+      method: "POST",
+      body: JSON.stringify({
+        move: parseInt(slider),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }).catch((err) => {
+      console.error(err);
+    });
+    setEndpointLatency(`${performance.now() - startTime} ms`);
+  };
+
+  const sliderRef = useRef(sendSliderMessage);
 
   useEffect(() => {
-    getEndpoints();
-  }, []);
+    sliderRef.current = sendSliderMessage;
+  }, [armEndpoint, slider]);
+
+  const useSliderDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        sliderRef.current?.();
+      };
+      return debounce(func, 50);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newSliderDebounce = useSliderDebounce(sendSliderMessage);
+
+  // ----------------ARM DEBOUNCE-------------------
+
+  const sendArmMessage = () => {
+    console.log("new arm endpoint new: ", arm);
+    console.log("new fetch: ", `${armEndpoint}/changeArm`);
+
+    let startTime = performance.now();
+    fetch(`${armEndpoint}/changeArm`, {
+      method: "POST",
+      body: JSON.stringify({
+        arm: parseInt(arm),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    })
+      .catch((err) => {
+        console.error(err);
+      })
+      .then((response) => response.json())
+      .then((data) => setSlider(data.currentAngle));
+    setEndpointLatency(`${performance.now() - startTime} ms`);
+  };
+  const armRef = useRef(sendArmMessage);
+
+  useEffect(() => {
+    armRef.current = sendArmMessage;
+  }, [armEndpoint, arm]);
+
+  const useArmDebounce = () => {
+    const debouncedCallback = useMemo(() => {
+      const func = () => {
+        armRef.current?.();
+      };
+      return debounce(func, 50);
+    }, []);
+
+    return debouncedCallback;
+  };
+
+  const newArmDebounce = useArmDebounce(sendArmMessage);
 
   const getEndpoints = () => {
     fetch("http://localhost:8080/endpoint", {
@@ -64,65 +156,65 @@ const Control = () => {
   };
 
   const handleLabel = (newArm) => {
-    if (newArm === "1") {
-      setLeftLabel("Left");
-      setRightLabel("Right");
-    } else if (newArm === "5") {
-      setLeftLabel("Counter");
-      setRightLabel("Clockwise");
-    } else if (newArm === "6") {
-      setLeftLabel("Close");
-      setRightLabel("Open");
-    } else if (newArm === "2" || newArm === "3" || newArm === "4") {
-      setLeftLabel("Down");
-      setRightLabel("Up");
+    switch (newArm) {
+      case "1":
+        setLeftLabel("Left");
+        setRightLabel("Right");
+        setRangeMax(180);
+        break;
+      case "2":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "3":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "4":
+        setLeftLabel("Down");
+        setRightLabel("Up");
+        setRangeMax(180);
+        break;
+      case "5":
+        setLeftLabel("Counter-Clockwise");
+        setRightLabel("Clockwise");
+        setRangeMax(270);
+        break;
+      case "6":
+        setLeftLabel("Close");
+        setRightLabel("Open");
+        setRangeMax(180);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleChangeArm = (event, newArm) => {
-    if (newArm != null) {
-      fetch(
-        `http://localhost:8080/changeArm/${selectRobotEndpointObject.uuid}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            arm: parseInt(newArm),
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getAuthToken()}`,
-          },
-        }
-      ).catch((err) => {
-        console.error(err);
-      });
-      setArm(newArm);
-      handleLabel(newArm);
+  const handleChangeArm = (event, newValue) => {
+    if (newValue != null) {
+      console.log("in pre: ", armEndpoint);
+      setArm(newValue);
+      handleLabel(newValue);
+      newArmDebounce();
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
-    fetch(
-      `http://localhost:8080/changeSlider/${selectRobotEndpointObject.uuid}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          move: parseInt(newValue),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    ).catch((err) => {
-      console.error(err);
-    });
     setSlider(newValue);
+    newSliderDebounce();
   };
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    setIsActiveEndpoint(event.target.value.active);
+    console.log(event.target.value);
+    setEndpointLatencyDisabled(false);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
+    setArmEndpoint(
+      "http://" + event.target.value.ip + ":" + event.target.value.port
+    );
   };
 
   const getStatusColour = (status) => {
@@ -141,63 +233,288 @@ const Control = () => {
     }
   };
 
+  const [endpointLatency, setEndpointLatency] = useState("-");
+  const [endpointLatencyDisabled, setEndpointLatencyDisabled] = useState(true);
+
+  // ----------------ZOOM INTEGRATION-------------------
+
+  const client = ZoomMtgEmbedded.createClient();
+
+  const userName = "Doctor";
+  const [zoomStarted, setZoomStarted] = useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
+  const [zoomMeetingNumber, setZoomMeetingNumber] = useState("");
+  const [zoomMeetingPasscode, setZoomMeetingPasscode] = useState("");
+
+  function getZoomData(event) {
+    fetch("http://localhost:8080/zoom", {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    }).then((response) => response.json())
+      .then((data) => getSignature(event, data));
+  }
+
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const handleKeyPressEnter = (event) => {
+    if (event.key === "Enter") {
+      getSignature();
+    }
+  };
+
+  function getSignature(e, data) {
+    e.preventDefault();
+
+    fetch(data.authEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meetingNumber: zoomMeetingNumber,
+        role: 0,
+      }),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        startMeeting(response.signature, data.sdkKey);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  function startMeeting(signature, sdkKey) {
+    let meetingSDKElement = document.getElementById("meetingSDKElement");
+    setZoomStarted(true);
+    client
+      .init({
+        zoomAppRoot: meetingSDKElement,
+        language: "en-US",
+        patchJsMedia: true,
+        customize: {
+          video: {
+            isResizable: true,
+            viewSizes: {
+              default: {
+                width: 600,
+                height: 450,
+              },
+              ribbon: {
+                width: 600,
+                height: 450,
+              },
+            },
+          },
+        },
+      })
+      .then(() => {
+        client
+          .join({
+            signature: signature,
+            sdkKey: sdkKey,
+            meetingNumber: zoomMeetingNumber,
+            password: zoomMeetingPasscode,
+            userName: userName,
+            userEmail: "",
+          })
+          .then(() => {
+            console.log("joined successfully");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  // ----------------HTML-------------------
+
   return (
     <div>
       <Header login={true} />
       <div className="main">
-        <div className="column">
-          <span>Current arm: {arm}</span>
-          <span>Current state: {slider}</span>
-          {streamURL && (
-            <img
-              id="camera-stream"
-              src={streamURL}
-              alt="Select the Robot in the Endpoint drop-down menu"
-            />
+        <div className="column left-column">
+          {!streamURL && (
+            <div className="no-stream-view">
+              <NoPhotographyIcon></NoPhotographyIcon>
+              <p id="no-stream-blurb">Please choose an endpoint</p>
+            </div>
           )}
-          <FormControl size="small" className="drop-down">
-            <InputLabel id="demo-simple-select-helper-label" color="primary">
-              Endpoint
-            </InputLabel>
-            <Select
-              className="endpoint-option"
-              value={selectRobotEndpointObject.name}
-              label="Endpoint"
-              onChange={handleRobotEndpoint}
-              onOpen={getEndpoints}
-              color="primary"
+
+          {streamURL && (
+            <img id="camera-stream" src={streamURL} alt="Stream error" />
+          )}
+          <div className="controls">
+            <ToggleButtonGroup
+              className="arm-buttons"
+              value={arm}
+              onChange={handleChangeArm}
+              size="md"
+              spacing={1}
+              defaultValue="1"
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+              disabled={!streamURL || !isActiveEndpoint}
             >
-              {allRobotEndpoints.map((robotEndpointOption) => (
-                <MenuItem
-                  className="endpoint-option"
-                  key={robotEndpointOption.uuid}
-                  value={robotEndpointOption}
-                >
-                  <Chip
-                    small="small"
-                    label={getStatusLabel(robotEndpointOption.active)}
-                    color={getStatusColour(robotEndpointOption.active)}
-                    size="small"
-                  />
-                  <ListItemText primary={robotEndpointOption.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <Button value="1">1</Button>
+              <Button value="2">2</Button>
+              <Button value="3">3</Button>
+              <Button value="4">4</Button>
+              <Button value="5">5</Button>
+              <Button value="6">6</Button>
+            </ToggleButtonGroup>
+
+            <Slider
+              valueLabelDisplay="on"
+              value={slider}
+              onChange={handleChangeSlider}
+              marks={marks}
+              color="success"
+              defaultValue={0}
+              max={rangeMax}
+              min={0}
+              sx={{
+                ".css-1eoe787-MuiSlider-markLabel": {
+                  transform: "translateX(0)",
+                },
+                ".css-yafthl-MuiSlider-markLabel": {
+                  transform: "translateX(-100%)",
+                },
+              }}
+              disabled={!streamURL || !isActiveEndpoint}
+            />
+          </div>
+          <div className="endpoint-row">
+            <FormControl size="small" className="drop-down">
+              <InputLabel id="demo-simple-select-helper-label" color="primary">
+                Endpoint
+              </InputLabel>
+              <Select
+                className="endpoint-option"
+                value={selectRobotEndpointObject.name}
+                label="Endpoint"
+                onChange={handleRobotEndpoint}
+                onOpen={getEndpoints}
+                color="primary"
+              >
+                {allRobotEndpoints.map((robotEndpointOption) => (
+                  <MenuItem
+                    className="endpoint-option"
+                    key={robotEndpointOption.uuid}
+                    value={robotEndpointOption}
+                  >
+                    <Chip
+                      small="small"
+                      label={getStatusLabel(robotEndpointOption.active)}
+                      color={getStatusColour(robotEndpointOption.active)}
+                      size="small"
+                    />
+                    <ListItemText primary={robotEndpointOption.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
+              color="success"
+              InputProps={{ readOnly: true }}
+              style={{ width: "50%", margin: "auto" }}
+            />
+          </div>
         </div>
 
-        <div className="column right">
+        <div className="column right-column">
+          {!zoomStarted && (
+            <div className="no-stream-view">
+              <Button
+                color="success"
+                onClick={handleModalOpen}
+                disabled={!streamURL || !isActiveEndpoint}
+              >
+                Enter Zoom Meeting Credentials
+              </Button>
+              <Modal open={openModal} onClose={handleModalClose}>
+                <Box sx={modalStyle} className="modal-zoom-login">
+                  <Typography id="modal-zoom-title" variant="h6" component="h2">
+                    Zoom Meeting
+                  </Typography>
+                  <div id="form">
+                    <FormControl fullWidth required>
+                      <InputLabel htmlFor="meetingNumber">
+                        Zoom Meeting Number
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingNumber"
+                        label="Zoom Meeting Number"
+                        onChange={(e) => setZoomMeetingNumber(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl fullWidth required variant="outlined">
+                      <InputLabel htmlFor="meetingPasscode">
+                        Zoom Meeting Passcode
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingPasscode"
+                        label="Zoom Meeting Passcode"
+                        onChange={(e) => setZoomMeetingPasscode(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <Button
+                        className="saveBtn"
+                        onClick={getZoomData}
+                        variant="soft"
+                        size="md"
+                        color="success"
+                      >
+                        Start Zoom
+                      </Button>
+                    </FormControl>
+                  </div>{" "}
+                </Box>
+              </Modal>
+            </div>
+          )}
+
+          <div id="meetingSDKElement">
+            {/* Zoom Meeting SDK Component View Rendered Here */}
+          </div>
+
           <TextField
             id="notes"
             label="Notes"
             multiline
-            rows={12}
-            fullWidth
+            rows={5}
             download="final_notes"
             variant="outlined"
             color="success"
             min={0}
             max={180}
+            style={{ width: "100%" }}
           />
           <div className="save">
             <Input
@@ -217,32 +534,6 @@ const Control = () => {
             >
               Download
             </Button>
-          </div>
-
-          <div className="arm-controls">
-            <ToggleButtonGroup
-              className="buttonGroup"
-              value={arm}
-              onChange={handleChangeArm}
-              size="md"
-              spacing={1}
-            >
-              <Button value="1">1</Button>
-              <Button value="2">2</Button>
-              <Button value="3">3</Button>
-              <Button value="4">4</Button>
-              <Button value="5">5</Button>
-              <Button value="6">6</Button>
-            </ToggleButtonGroup>
-
-            <Slider
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              value={slider}
-              onChange={handleChangeSlider}
-              marks={marks}
-              color="success"
-            />
           </div>
         </div>
       </div>
