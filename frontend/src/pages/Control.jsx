@@ -42,6 +42,7 @@ const Control = () => {
   const [allRobotEndpoints, setAllRobotEndpoints] = useState([]);
   const [selectRobotEndpointObject, setSelectRobotEndpointObject] =
     useState("");
+  const [isActiveEndpoint, setIsActiveEndpoint] = useState(false);
   const [streamURL, setStreamURL] = useState("");
   const [armEndpoint, setArmEndpoint] = useState("");
 
@@ -62,11 +63,6 @@ const Control = () => {
       handleChangeArm(null, "1");
     }
   }, []);
-
-  useEffect(() => {
-    console.log("rerender: ", armEndpoint);
-  }, [armEndpoint]);
-
   // ----------------SLIDER DEBOUNCE-------------------
 
   const sendSliderMessage = () => {
@@ -212,6 +208,7 @@ const Control = () => {
 
   const handleRobotEndpoint = (event) => {
     setSelectRobotEndpointObject(event.target.value);
+    setIsActiveEndpoint(event.target.value.active);
     console.log(event.target.value);
     setEndpointLatencyDisabled(false);
     setStreamURL("http://" + event.target.value.ip + ":5000/stream.mjpg");
@@ -371,7 +368,7 @@ const Control = () => {
                 display: "flex",
                 flexWrap: "wrap",
               }}
-              disabled={!streamURL}
+              disabled={!streamURL || !isActiveEndpoint}
             >
               <Button value="1">1</Button>
               <Button value="2">2</Button>
@@ -382,7 +379,6 @@ const Control = () => {
             </ToggleButtonGroup>
 
             <Slider
-              aria-label="Default"
               valueLabelDisplay="on"
               value={slider}
               onChange={handleChangeSlider}
@@ -399,7 +395,7 @@ const Control = () => {
                   transform: "translateX(-100%)",
                 },
               }}
-              disabled={!streamURL}
+              disabled={!streamURL || !isActiveEndpoint}
             />
           </div>
           <div className="endpoint-row">
@@ -453,7 +449,7 @@ const Control = () => {
               <Button
                 color="success"
                 onClick={handleModalOpen}
-                disabled={!streamURL}
+                disabled={!streamURL || !isActiveEndpoint}
               >
                 Enter Zoom Meeting Credentials
               </Button>
