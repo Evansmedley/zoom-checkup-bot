@@ -17,6 +17,10 @@ import { useRef } from "react";
 import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 import { useMemo } from "react";
 import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const Control = () => {
   const download = () => {
@@ -198,14 +202,12 @@ const Control = () => {
       setArm(newValue);
       handleLabel(newValue);
       newArmDebounce();
-      // debounceArm.current?.(newValue, armEndpoint);
     }
   };
 
   const handleChangeSlider = (event, newValue) => {
     setSlider(newValue);
     newSliderDebounce();
-    // debounceSlider.current?.(newValue);
   };
 
   const handleRobotEndpoint = (event) => {
@@ -241,12 +243,33 @@ const Control = () => {
 
   const client = ZoomMtgEmbedded.createClient();
 
-  const authEndpoint =
-    "https://sysc-zoom-auth-server-3b591ca480f6.herokuapp.com/";
-  const sdkKey = "97zkC6mhQXmbHVHgAe9yw";
-  const meetingNumber = "85063970671";
-  const passWord = "Y0xf3G";
+  const authEndpoint = "http://localhost:4000";
+  const sdkKey = "j5PHD6RKRCq_5FGcfBlHQg";
   const userName = "Doctor";
+  const [zoomStarted, setZoomStarted] = useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
+  const [zoomMeetingNumber, setZoomMeetingNumber] = useState("");
+  const [zoomMeetingPasscode, setZoomMeetingPasscode] = useState("");
+
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const handleKeyPressEnter = (event) => {
+    if (event.key === "Enter") {
+      getSignature();
+    }
+  };
 
   function getSignature(e) {
     e.preventDefault();
@@ -255,7 +278,7 @@ const Control = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        meetingNumber: meetingNumber,
+        meetingNumber: zoomMeetingNumber,
         role: 0,
       }),
     })
@@ -270,7 +293,7 @@ const Control = () => {
 
   function startMeeting(signature) {
     let meetingSDKElement = document.getElementById("meetingSDKElement");
-
+    setZoomStarted(true);
     client
       .init({
         zoomAppRoot: meetingSDKElement,
@@ -297,8 +320,8 @@ const Control = () => {
           .join({
             signature: signature,
             sdkKey: sdkKey,
-            meetingNumber: meetingNumber,
-            password: passWord,
+            meetingNumber: zoomMeetingNumber,
+            password: zoomMeetingPasscode,
             userName: userName,
             userEmail: "",
           })
@@ -314,6 +337,8 @@ const Control = () => {
       });
   }
 
+  // ----------------HTML-------------------
+
   return (
     <div>
       <Header login={true} />
@@ -322,7 +347,7 @@ const Control = () => {
           {!streamURL && (
             <div className="no-stream-view">
               <NoPhotographyIcon></NoPhotographyIcon>
-              <p>Please choose an endpoint</p>
+              <p id="no-stream-blurb">Please choose an endpoint</p>
             </div>
           )}
 
@@ -341,6 +366,7 @@ const Control = () => {
                 display: "flex",
                 flexWrap: "wrap",
               }}
+              disabled={!streamURL}
             >
               <Button value="1">1</Button>
               <Button value="2">2</Button>
@@ -368,64 +394,115 @@ const Control = () => {
                   transform: "translateX(-100%)",
                 },
               }}
+              disabled={!streamURL}
             />
           </div>
-          <FormControl size="small" className="drop-down">
-            <InputLabel id="demo-simple-select-helper-label" color="primary">
-              Endpoint
-            </InputLabel>
-            <Select
-              className="endpoint-option"
-              value={selectRobotEndpointObject.name}
-              label="Endpoint"
-              onChange={handleRobotEndpoint}
-              onOpen={getEndpoints}
-              color="primary"
-            >
-              {allRobotEndpoints.map((robotEndpointOption) => (
-                <MenuItem
-                  className="endpoint-option"
-                  key={robotEndpointOption.uuid}
-                  value={robotEndpointOption}
-                >
-                  <Chip
-                    small="small"
-                    label={getStatusLabel(robotEndpointOption.active)}
-                    color={getStatusColour(robotEndpointOption.active)}
-                    size="small"
-                  />
-                  <ListItemText primary={robotEndpointOption.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            disabled={endpointLatencyDisabled}
-            size="small"
-            id="endpoint-latency"
-            label="Endpoint Latency"
-            defaultValue="-"
-            value={endpointLatency}
-            variant="outlined"
-            color="success"
-            InputProps={{ readOnly: true }}
-            style={{ width: "50%", margin: "auto" }}
-          />
+          <div className="endpoint-row">
+            <FormControl size="small" className="drop-down">
+              <InputLabel id="demo-simple-select-helper-label" color="primary">
+                Endpoint
+              </InputLabel>
+              <Select
+                className="endpoint-option"
+                value={selectRobotEndpointObject.name}
+                label="Endpoint"
+                onChange={handleRobotEndpoint}
+                onOpen={getEndpoints}
+                color="primary"
+              >
+                {allRobotEndpoints.map((robotEndpointOption) => (
+                  <MenuItem
+                    className="endpoint-option"
+                    key={robotEndpointOption.uuid}
+                    value={robotEndpointOption}
+                  >
+                    <Chip
+                      small="small"
+                      label={getStatusLabel(robotEndpointOption.active)}
+                      color={getStatusColour(robotEndpointOption.active)}
+                      size="small"
+                    />
+                    <ListItemText primary={robotEndpointOption.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              disabled={endpointLatencyDisabled}
+              size="small"
+              id="endpoint-latency"
+              label="Endpoint Latency"
+              defaultValue="-"
+              value={endpointLatency}
+              variant="outlined"
+              color="success"
+              InputProps={{ readOnly: true }}
+              style={{ width: "50%", margin: "auto" }}
+            />
+          </div>
         </div>
 
         <div className="column right-column">
-          <Button
-            className="saveBtn"
-            onClick={getSignature}
-            variant="soft"
-            size="md"
-            color="success"
-          >
-            Start Zoom
-          </Button>
+          {!zoomStarted && (
+            <div className="no-stream-view">
+              <Button
+                color="success"
+                onClick={handleModalOpen}
+                disabled={!streamURL}
+              >
+                Enter Zoom Meeting Credentials
+              </Button>
+              <Modal open={openModal} onClose={handleModalClose}>
+                <Box sx={modalStyle} className="modal-zoom-login">
+                  <Typography id="modal-zoom-title" variant="h6" component="h2">
+                    Zoom Meeting
+                  </Typography>
+                  <div id="form">
+                    <FormControl fullWidth required>
+                      <InputLabel htmlFor="meetingNumber">
+                        Zoom Meeting Number
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingNumber"
+                        label="Zoom Meeting Number"
+                        onChange={(e) => setZoomMeetingNumber(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl fullWidth required variant="outlined">
+                      <InputLabel htmlFor="meetingPasscode">
+                        Zoom Meeting Passcode
+                      </InputLabel>
+                      <OutlinedInput
+                        id="meetingPasscode"
+                        label="Zoom Meeting Passcode"
+                        onChange={(e) => setZoomMeetingPasscode(e.target.value)}
+                        onKeyDown={handleKeyPressEnter}
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <Button
+                        className="saveBtn"
+                        onClick={getSignature}
+                        variant="soft"
+                        size="md"
+                        color="success"
+                      >
+                        Start Zoom
+                      </Button>
+                    </FormControl>
+                  </div>{" "}
+                </Box>
+              </Modal>
+            </div>
+          )}
+
           <div id="meetingSDKElement">
             {/* Zoom Meeting SDK Component View Rendered Here */}
           </div>
+
           <TextField
             id="notes"
             label="Notes"

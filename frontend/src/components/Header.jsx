@@ -28,14 +28,14 @@ const Header = ({ login }) => {
           >
             Home
           </Button>
-          <Button
+          {/* <Button
             className="App-link"
             href="/contact"
             color="headerColor"
             size="large"
           >
             Contact
-          </Button>
+          </Button> */}
           {login && (
             <Button
               className="App-link"
