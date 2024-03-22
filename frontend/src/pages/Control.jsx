@@ -148,7 +148,7 @@ const Control = () => {
   const newArmDebounce = useArmDebounce(sendArmMessage);
 
   const getEndpoints = () => {
-    fetch("http://localhost:8080/endpoint", {
+    fetch("https://localhost:8080/endpoint", {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     })
       .then((response) => response.json())
@@ -249,7 +249,7 @@ const Control = () => {
   const [zoomMeetingPasscode, setZoomMeetingPasscode] = useState("");
 
   function getZoomData(event) {
-    fetch("http://localhost:8080/zoom", {
+    fetch("https://localhost:8080/zoom", {
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     }).then((response) => response.json())
       .then((data) => getSignature(event, data));
