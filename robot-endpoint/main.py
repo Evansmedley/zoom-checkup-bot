@@ -11,7 +11,7 @@ def get_args():
                         help='Desired name of endpoint', required=True)
     parser.add_argument('-s', '--server', action='store', type=str, 
                         help='Address for contacting the server', required=True)
-    parser.add_argument('-h', '--hostname', action='store_true',
+    parser.add_argument('--hostname', action='store_true',
                         help='Flag indicating that the server has a hostname, not an IP address.')
     parser.add_argument('-p', '--listen_port', action='store', type=int, 
                         help='Port to listen on', default=8080, required=False)

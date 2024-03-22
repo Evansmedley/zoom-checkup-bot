@@ -14,4 +14,4 @@ ENV SERVER_ADDRESS ${SERVER_ADDRESS}
 ARG CLIENT_ADDRESS
 ENV CLIENT_ADDRESS ${CLIENT_ADDRESS}
 
-CMD python3 main.py -n cloud-endpoint -s ${SERVER_ADDRESS} -u ${CLIENT_ADDRESS} -p 8080 -d -h
+CMD python3 main.py -n cloud-endpoint -s ${SERVER_ADDRESS} -u ${CLIENT_ADDRESS} -p 8080 -d --hostname
