@@ -42,12 +42,8 @@ class Move_Motors:
         """
         time.sleep(1)
 
-        self.Arm.Arm_serial_servo_write6(80, 90, 90, 0, 90, 165, 500)
+        self.Arm.Arm_serial_servo_write6(90, 90, 90, 0, 90, 165, 500)
         time.sleep(1)
-    
-    # def set_all_motors(self) -> None:
-    #     self.Arm.Arm_serial_servo_write6(60, 80, 90, 0, 90, 0, 500)
-    #     self.update_real_position()
 
 
     def boundaries(self, next_angle: int, motor: Motors) -> int:
@@ -79,12 +75,6 @@ class Move_Motors:
         self.motor5.curr_angle = self.Arm.Arm_serial_servo_read(self.motor5.motor_id)
         self.motor6.curr_angle = self.Arm.Arm_serial_servo_read(self.motor6.motor_id)
 
-        # time.sleep(0.5)
-
-        # list_angles = [self.motor1.curr_angle, self.motor2.curr_angle, self.motor3.curr_angle, self.motor4.curr_angle, self.motor5.curr_angle,  self.motor6.curr_angle]
-        # print(list_angles)
-        # list_angles = [90, 10, 0, 0, 0, 0]
-        # fwd_k = ForwardKinematics(list_angles, [0, 0, 0, 0, 0, 0])
 
     def set_motor(self, angle: int, motor_num: int) -> None:
         """
@@ -116,8 +106,8 @@ class Move_Motors:
         return abs(final_angle - current_angle) * time_per_angle
 
 def set_all_angles():
-    motor1 = Motors(1, 0, 180, 90, MOVEMENT_TIME)
-    motor2 = Motors(2, 0, 130, 90, MOVEMENT_TIME)
+    motor1 = Motors(1, 10, 170, 90, MOVEMENT_TIME)
+    motor2 = Motors(2, 0, 120, 90, MOVEMENT_TIME)
     motor3 = Motors(3, 0, 180, 90, MOVEMENT_TIME)
     motor4 = Motors(4, 0, 180, 0, MOVEMENT_TIME)
     motor5 = Motors(5, 0, 180, 90, MOVEMENT_TIME)
@@ -125,7 +115,4 @@ def set_all_angles():
 
     return motor1, motor2, motor3, motor4, motor5, motor6
     
-# motor1, motor2, motor3, motor4, motor5, motor6 = set_all_angles()
-# move_bot = Move_Motors(Arm_Device(), motor1, motor2, motor3, motor4, motor5, motor6)
-# move_bot.set_all_motors()
     

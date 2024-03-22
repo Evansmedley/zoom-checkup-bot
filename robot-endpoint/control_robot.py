@@ -1,11 +1,11 @@
-import threading
-import os
+# import threading
+# import os
 import time
 from movements import set_all_angles, Move_Motors
 from Arm_Lib import Arm_Device
 
 
-PI_IP = "192.68.123.68"
+# PI_IP = "192.68.123.68"
 
 class Arm():
     
@@ -43,8 +43,3 @@ class Arm():
     
     def cleanup(self):
         del Arm
-
-    # NOT SURE WHAT TO DO WITH THIS :)        
-    # th1 = threading.Thread(target=move_bot)
-    # th1.setDaemon(True)
-    # th1.start()
