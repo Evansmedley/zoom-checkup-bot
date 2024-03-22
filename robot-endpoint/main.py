@@ -11,6 +11,8 @@ def get_args():
                         help='Desired name of endpoint', required=True)
     parser.add_argument('-s', '--server', action='store', type=str, 
                         help='Address for contacting the server', required=True)
+    parser.add_argument('-h', '--hostname', action='store_true',
+                        help='Flag indicating that the server has a hostname, not an IP address.')
     parser.add_argument('-p', '--listen_port', action='store', type=int, 
                         help='Port to listen on', default=8080, required=False)
     parser.add_argument('-d', '--debug', action='store_true', 
@@ -31,7 +33,7 @@ if __name__ == '__main__':
     
     # Send a POST request to the server to register
     http_client = HTTPClient(args.name)
-    uuid = http_client.register(args.server, args.listen_port, args.uri, args.local)
+    uuid = http_client.register(args.server, args.hostname, args.listen_port, args.uri, args.local)
 
     # Start camera streaming
     if not args.debug:
